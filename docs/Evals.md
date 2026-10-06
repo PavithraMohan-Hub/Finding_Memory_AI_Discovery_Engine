@@ -356,3 +356,33 @@ This matrix defines the required automated and integration test coverage for Pha
 | P1-NEG-08 | Negative record counts | Rejects negative `records_stored`, `total_records`, or `member_count` (CHECK constraint). |
 | P1-NEG-09 | Anonymous research-data write | Rejects INSERT / UPDATE / DELETE from `anon` or public client roles (RLS / privilege revoke). |
 | P1-NEG-10 | Unauthorized update/delete | Rejects direct mutation of research records by unauthenticated actors (RLS policy). |
+
+---
+
+## 15. Phase 2 Vertical Slice Verification Matrix
+
+This matrix defines the required automated, integration, and security test coverage for Phase 2: First Real Evidence Vertical Slice (10 unique accepted records).
+
+### 15.1 Positive Tests (PASS)
+
+| Test ID | Scenario | Expected Behavior |
+|---|---|---|
+| P2-POS-01 | Valid Record Normalization | Raw source payload maps cleanly into canonical schema preserving text verbatim and trimming whitespace. |
+| P2-POS-02 | Valid Fingerprint Generation | Computes deterministic SHA-256 hash of normalized text for deduplication. |
+| P2-POS-03 | Valid Insertion & Provenance | Successfully inserts validated evidence record into hosted Supabase database using server-side credentials. |
+| P2-POS-04 | Source Linkage | Record correctly links to verified active entry in `source_registry`. |
+| P2-POS-05 | Batch Linkage | Record correctly links to auditable `collection_batches` entry with valid source pairing. |
+| P2-POS-06 | Thread Linkage | When evidence is part of a thread, links cleanly to `threads` container. |
+| P2-POS-07 | Evidence Explorer Display | Minimal internal Evidence Explorer UI queries and renders evidence excerpt, product, date, metadata, and safe link. |
+| P2-POS-08 | Verifiable Source URL | Each canonical record includes an accessible, verified original public URL. |
+
+### 15.2 Negative Tests (FAIL AS EXPECTED)
+
+| Test ID | Scenario | Expected Error / Boundary |
+|---|---|---|
+| P2-NEG-01 | Missing Required Source | Ingestion rejects payload lacking `source_id` before database insert. |
+| P2-NEG-02 | Missing Original Text | Ingestion rejects payload with empty or null `original_text`. |
+| P2-NEG-03 | Invalid Corpus Type | Rejects payloads where `corpus_type` != 'USER_EVIDENCE' (or supported type). |
+| P2-NEG-04 | Malformed Record | Zod validator fails on missing required canonical fields (e.g., missing collection_method, product). |
+| P2-NEG-05 | Duplicate Handling | Detects matching fingerprint or source record ID, marks record as non-canonical duplicate without dropping data. |
+| P2-NEG-06 | Browser Secret Protection | Client-side bundles and components contain zero imports or references to `SUPABASE_SECRET_KEY`. |

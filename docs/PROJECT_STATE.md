@@ -1,8 +1,8 @@
 # PROJECT_STATE — Finding Memory
 
 **Last updated:** 2026-10-06
-**Current phase:** Phase 1 — Database + Research Schema (VERIFIED)
-**Status:** PHASE 1 — VERIFIED
+**Current phase:** Phase 2 — First Real Evidence Ingestion (VERIFIED)
+**Status:** PHASE 2 — VERIFIED
 
 ---
 
@@ -15,7 +15,20 @@
 | Research goal | Understand how people attempt to retrieve photos when their memory of them is incomplete |
 | Target corpus | ~2,000 qualifying USER_EVIDENCE records (incremental: 10 → 100 → 500 → 2,000+) |
 | Architecture | Next.js/TypeScript (Vercel) + Supabase PostgreSQL + pgvector + Gemini API + GitHub Actions |
-| Current implementation state | Phase 1 Hosted Database Deployment & Verification Complete |
+| Current implementation state | Phase 2 First Real Evidence Vertical Slice Complete & Verified |
+
+### Phase 2 Verification Record
+- **Verification status:** PHASE 2 — VERIFIED
+- **Sample size:** 10 UNIQUE, REAL, VERIFIED `USER_EVIDENCE` records (0 synthetic records)
+- **Sources used:** `source_registry` record for Reddit Public Discussions (r/googlephotos & r/GooglePixel)
+- **Collection batch:** `collection_batches` ID `e6fe8a4b-b13e-45db-bea7-f067f296e094` (Status: `COMPLETE`, Stored: 10, Dups: 0, Failed: 0)
+- **Ingestion architecture:** `src/lib/ingestion/` (types, validation, normalize, fingerprint, deduplicate, connectors/manual-import, ingest)
+- **Connectors supported:** Manual structured import via JSON (`data/phase2_vertical_slice_evidence.json`) and CSV (`data/phase2_vertical_slice_evidence.csv`)
+- **Deduplication:** Content fingerprint (SHA-256) + in-batch & database duplicate detection (`is_canonical` tracking without dropping records)
+- **Server secret isolation:** `SUPABASE_SECRET_KEY` strictly isolated to server runtime via `src/lib/db/supabase-server.ts`
+- **Internal Evidence Explorer:** Live at `/evidence` (`src/app/evidence/page.tsx`), server-rendered with XSS protection and verifiable source links
+- **Automated test suite (`tests/phase2_vertical_slice.test.ts`):** 13/13 PASS (7 positive, 6 negative / boundary tests)
+- **Lint / Typecheck / Build:** 100% PASS with zero warnings or errors
 
 ### Phase 1 Verification Record
 - **Verification status:** PHASE 1 — VERIFIED
@@ -89,8 +102,8 @@
 | PLANNING | Documentation | APPROVED |
 | 0 | Project Foundation | VERIFIED |
 | 1 | Database + Research Schema | VERIFIED |
-| 2 | First Real Evidence Ingestion | NOT STARTED |
-| 3 | Cleaning + Normalization + Dedup | NOT STARTED |
+| 2 | First Real Evidence Ingestion | VERIFIED |
+| 3 | Cleaning + Normalization + Dedup | INTEGRATED IN PHASE 2 (Formalized in Phase 3) |
 | 4 | Relevance Classifier | NOT STARTED |
 | 5 | Structured AI Extraction | NOT STARTED |
 | 6 | Thread / Journey Reconstruction | NOT STARTED |
@@ -110,13 +123,13 @@
 
 | Metric | Value |
 |---|---|
-| Records collected | 0 |
-| Records qualifying (USER_EVIDENCE, main) | 0 |
-| Records analysed | 0 |
-| Records embedded | 0 |
+| Records collected | 10 |
+| Records qualifying (USER_EVIDENCE, main) | 10 |
+| Records analysed | 0 (deferred to Phase 4/5) |
+| Records embedded | 0 (deferred to Phase 7) |
 | Clusters identified | 0 |
-| Gold-standard examples | 0 |
-| Corpus snapshot date | — |
+| Gold-standard examples | 10 (initial real seed set) |
+| Corpus snapshot date | 2026-10-06 |
 
 ---
 
