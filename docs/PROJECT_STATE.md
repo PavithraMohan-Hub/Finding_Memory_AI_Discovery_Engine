@@ -64,7 +64,7 @@
 |---|---|---|
 | PLANNING | Documentation | APPROVED |
 | 0 | Project Foundation | VERIFIED |
-| 1 | Database + Research Schema | NOT STARTED (Awaiting start command) |
+| 1 | Database + Research Schema | IN PROGRESS (CLI linked; Migration 001 foundation created & approved; awaiting push) |
 | 2 | First Real Evidence Ingestion | NOT STARTED |
 | 3 | Cleaning + Normalization + Dedup | NOT STARTED |
 | 4 | Relevance Classifier | NOT STARTED |
@@ -101,7 +101,7 @@
 | Service | Status |
 |---|---|
 | GitHub | CONFIGURED (origin/main connected) |
-| Supabase | NOT CONFIGURED |
+| Supabase | CONFIGURED (CLI linked to hosted dev project; credentials verified safe; Migration 001 approved) |
 | Vercel | NOT CONFIGURED |
 | Google AI Studio / Gemini API | NOT CONFIGURED |
 | YouTube Data API | NOT CONFIGURED (Phase 12) |
@@ -116,7 +116,7 @@
 | Credential | Required for | Status |
 |---|---|---|
 | GitHub account | Phase 0 | CONFIGURED |
-| Supabase account | Phase 1 | NEEDED NEXT (Phase 1) |
+| Supabase credentials | Phase 1 | CONFIGURED (.env.local configured & safety verified, ignored by Git) |
 | GEMINI_API_KEY | Phase 4 | NEEDED LATER |
 | Vercel account | Phase 9 | NEEDED LATER |
 | YOUTUBE_API_KEY | Phase 12 | NEEDED LATER |

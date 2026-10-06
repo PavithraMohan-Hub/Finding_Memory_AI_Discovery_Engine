@@ -128,16 +128,16 @@ graph TD
 
 **Tasks:**
 - [ ] Create Supabase project (development)
-- [ ] Add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY to .env.local
-- [ ] Write SQL migration 001: source_registry, collection_batches
-- [ ] Write SQL migration 002: raw_evidence, threads, thread_messages
-- [ ] Write SQL migration 003: evidence_analysis
-- [ ] Write SQL migration 004: evidence_embeddings (enable pgvector)
+- [ ] Add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY to .env.local
+- [ ] Write SQL migration 001: Foundational constraints and types
+- [ ] Write SQL migration 002: source_registry, collection_batches
+- [ ] Write SQL migration 003: threads, thread_messages, raw_evidence
+- [ ] Write SQL migration 004: evidence_analysis
 - [ ] Write SQL migration 005: research_clusters, cluster_members
 - [ ] Write SQL migration 006: human_annotations
 - [ ] Write SQL migration 007: analysis_jobs, report_runs
-- [ ] Enable RLS on all tables; define initial policies
-- [ ] Create indexes per ResearchSchema.md §17
+- [ ] Write SQL migration 008: Indexes
+- [ ] Write SQL migration 009: RLS policies, grants, and permissions
 - [ ] Create immutability constraint / trigger on raw_evidence.original_text
 - [ ] Write and run synthetic test fixtures (labelled TEST_FIXTURE_SYNTHETIC=true)
 - [ ] Verify all foreign key constraints
@@ -149,7 +149,7 @@ graph TD
 - [ ] RLS prevents unauthenticated writes to raw_evidence
 - [ ] Synthetic fixture inserts and reads work
 - [ ] original_text cannot be updated after insert (trigger test)
-- [ ] pgvector extension enabled; basic vector insert/query works
+- [ ] original_text cannot be updated after insert (trigger test)
 
 **Model:** Flash Medium  
 **Credentials needed:** Supabase account (free tier)
@@ -337,6 +337,8 @@ This phase introduces the first Gemini API calls. Evaluate against gold-standard
 - [ ] Select embedding model (Gemini text-embedding model; dedicated embedding endpoint only)
 - [ ] Implement EmbeddingGenerator: chunk strategy, batch processing
 - [ ] Store each embedding with embedding_model, embedding_version, chunk_text, corpus_type
+- [ ] Create SQL migration to enable pgvector extension
+- [ ] Create SQL migration for evidence_embeddings table and dimensions
 - [ ] Create pgvector HNSW or IVFFlat index on evidence_embeddings.embedding_vector
 - [ ] Implement semantic clustering (k-means or HDBSCAN; configurable)
 - [ ] Implement structured cluster assignment (evidence_analysis.problem_codes co-occurrence)

@@ -180,7 +180,7 @@ The dashboard must implement (per docs/ProblemStatement_Finding_Memory.txt §AD�
 | Vector extension | pgvector (enabled on Supabase) |
 | Query builder | Supabase JS client + raw SQL for complex queries |
 | Migrations | Managed SQL migration files — no informal schema mutation |
-| Row-Level Security | Enabled where appropriate; service-role key never exposed to browser |
+| Row-Level Security | Enabled on all tables; secret key never exposed to browser. Use publishable key + RLS for read flows; secret key for privileged server writes. |
 | Backups | Supabase built-in free-tier backups |
 
 ### 7.1 Conceptual Table Groups
@@ -453,7 +453,8 @@ graph TD
 - .env.local — developer secrets (never committed)
 - .env.example — variable names only (committed)
 - Vercel environment variables — production secrets
-- Supabase service role key — server-only, never in NEXT_PUBLIC_*
+- Supabase secret key — server-only, never in NEXT_PUBLIC_*
+- Supabase publishable key — safe for client, combined with RLS
 
 ---
 
@@ -465,7 +466,7 @@ graph TD
 | Prompt injection | All external text is untrusted data |
 | URL security | SSRF protection; blocked internal addresses |
 | Input validation | Zod schemas; parameterized SQL; escaped output |
-| RLS | Supabase Row-Level Security on evidence tables |
+| RLS | Supabase Row-Level Security restricts public reads (publishable key); privileged writes run via server (secret key) |
 | Researcher access | Collection, annotation, export are researcher-only |
 | No secrets in logs | Credentials, tokens, unnecessary PII never logged |
 
@@ -488,7 +489,8 @@ graph TD
     
     Browser -->|Input Validated via Zod| API
     Sources -->|Untrusted Data / SSRF Check| API
-    API -->|RLS + Server Secret| DB
+    API -->|Privileged Write / Secret Key| DB
+    Browser -.->|Public Read / Publishable Key + RLS| DB
     
     style Public Internet fill:#ffebee,stroke:#c62828
     style Vercel fill:#e8f5e9,stroke:#2e7d32
