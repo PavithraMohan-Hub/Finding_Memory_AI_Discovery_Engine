@@ -1,0 +1,938 @@
+SECTION A — TITLE AND ONE-LINE DEFINITION
+
+Finding Memory
+AI Discovery Engine for Incomplete-Memory Visual Retrieval
+
+Finding Memory turns public accounts of searching for remembered visual items into traceable evidence about the clues people use, the paths they take, and the problems that deserve further research.
+
+Primary product context: Google Photos.
+Project stage: Product discovery, before final problem selection, root-cause validation, solution ideation, feature design, MVP prototyping or PRD creation.
+Document status: Draft for human approval. This document specifies a future research tool; it does not report completed research or authorize implementation.
+Version: 1.1. Updated 6 October 2026 to require quantitative and qualitative dashboard visualisations.
+
+SECTION B — OVERVIEW
+
+People use visual libraries to keep memories and useful information. Later, they may know what they want to recover without remembering the words, date or location that would help them find it. Their starting point might be a person's relationship to them, a colour, a conversation, a life period, a text fragment or an approximate scene.
+
+Finding Memory studies this behaviour through public accounts of actual retrieval attempts. It examines successful, partly successful, unsuccessful and abandoned searches, as well as attempts whose outcome is unreported. Difficulty is a research question, not a condition imposed on every record.
+
+Google Photos is the primary context because it is the product chosen for this project. Comparisons with other photo libraries and visual-content platforms help distinguish problems shared across products from problems tied to a particular search experience, media type or storage arrangement. Inclusion does not imply a verified market-share ranking.
+
+The engine serves researchers studying retrieval; it does not search a consumer's personal photo library. Its input is permitted public evidence and supporting reference material. Its output is inspectable cases, patterns, tentative explanations and questions for primary research.
+
+The governing principle is: evidence first, interpretation second, solution later. Natural-language search, visual search, automated questioning, recognition-led browsing and chat interfaces are possible topics to investigate, not predetermined answers. Neither Google Photos search quality nor any preferred feature concept is assumed.
+
+SECTION C — PROBLEM CONTEXT
+
+The situation under study begins when someone knows or strongly believes that a specific visual item exists and wants to retrieve it, but their initial memory is incomplete, approximate, uncertain or difficult to express.
+
+The target may be a photo, video, screenshot, receipt, ticket, document, ID image, downloaded image, meme, forwarded image, saved social post, reference image or another visually stored item. The desired result may be an exact item rather than any image of the same event or subject.
+
+Illustrative scenarios, not research findings or participant quotations:
+
+- I remember a photo with my cousin, but not when it was taken.
+- I remember a phrase in a screenshot, but not the date I saved it.
+- I can picture the image but cannot describe it clearly.
+- I saw the photo recently in Memories and cannot find it again.
+- I remember the event but not its place or year.
+- I know the image exists somewhere, but not which account or application contains it.
+
+Memory may also change during retrieval. Seeing a nearby image might prompt a new clue; an initially confident date might be revised. These possibilities must be studied without treating a plausible sequence as an observed one.
+
+The existence of the target is usually a user belief in public evidence. The engine cannot independently establish that it was saved, indexed or accessible unless the source provides that information. Missing results must not automatically become evidence of a memory failure or a search-system defect.
+
+SECTION D — GOAL
+
+Build a research engine that gathers real, permitted public evidence; identifies relevant retrieval cases; preserves what users actually report; structures cues, uncertainty, actions, journeys and outcomes; and supports traceable comparison and analysis. The resulting shortlist of problem opportunities must help decide what to investigate through interviews, live retrieval tasks, usability studies or diary research.
+
+Central research question:
+
+“When users know a visual item exists but cannot precisely describe it at the start of retrieval, what fragments of memory are available to them, how do those cues evolve during the retrieval process, where does the existing retrieval experience stop supporting them, and which recurring breakdown represents the strongest opportunity to improve successful retrieval?”
+
+Supporting questions include what distinguishes successful attempts, when uncertain clues mislead retrieval, what triggers reformulation, how users verify an exact match, and when another account, app, device or person enters the journey.
+
+The engine must support this research chain:
+Raw evidence → relevant cases → memory cues → behaviours → journeys → breakdowns and workarounds → outcomes → patterns → root-problem hypotheses → research opportunities.
+
+At this stage, the project does not select a final consumer feature, prove a causal root problem, estimate population prevalence from public posts, or replace primary research. Creating this document does not start collection, implementation or deployment.
+
+SECTION E — JOBS TO BE DONE
+
+| Job | Researcher need | System responsibility | Expected output |
+| --- | --- | --- | --- |
+| JTBD 1 — Collect real evidence | Access authentic accounts without losing their origin. | Collect through permitted routes and record source, time, method and access limits. | Source-linked records and a collection log. |
+| JTBD 2 — Identify relevant evidence | Separate incomplete-memory retrieval from unrelated complaints. | Apply inclusion, exclusion and control rules; explain ambiguous decisions. | Qualified cases, exclusions and a review queue. |
+| JTBD 3 — Understand memory | Know what was remembered, explicitly forgotten or uncertain. | Extract supported cues with source spans and cue states. | A cue profile with unknowns preserved. |
+| JTBD 4 — Understand articulation | See how people turn memory into a query or browsing action. | Preserve actual queries when available and distinguish them from descriptions of searching. | Query and articulation examples. |
+| JTBD 5 — Reconstruct journeys | Follow an attempt from need to outcome. | Link reported actions in order without inventing missing steps. | A partial or complete journey with evidence for each step. |
+| JTBD 6 — Understand cue evolution | Identify new, revised or discarded clues. | Connect changes to reported triggers and positions in the journey. | Evidence-backed cue changes and unreported transitions. |
+| JTBD 7 — Detect breakdowns | Locate the point at which progress becomes difficult. | Code observed failure points separately from proposed causes. | Inspectable breakdown groups. |
+| JTBD 8 — Compare experiences | Understand differences across products and media. | Compare like-for-like subsets with visible coverage and feature context. | Bounded comparison tables and supporting cases. |
+| JTBD 9 — Discover root-problem patterns | Find explanations worth testing. | Combine emergent coding, structured analysis and semantic grouping. | Tentative hypotheses with support, alternatives and negative cases. |
+| JTBD 10 — Interrogate evidence through RAG | Ask research questions without manually reading every record. | Retrieve eligible evidence and synthesize answers with claim-level citations. | Supported answers or an explicit insufficiency response. |
+| JTBD 11 — Expose contradictions | Avoid a one-sided account of the problem. | Retrieve successful cases, opposing accounts and boundary conditions. | A contradiction and negative-case view. |
+| JTBD 12 — Identify primary-research gaps | Decide what must be learned directly from users. | Convert missing or disputed information into neutral research questions. | A prioritised research-gap list and suggested study methods. |
+
+SECTION F — KEY STAKEHOLDERS / AUDIENCE
+
+| Stakeholder | Why they need the engine | What they should be able to learn |
+| --- | --- | --- |
+| Product Manager | Bound and prioritise the problem before solution investment. | Which breakdowns recur, affect important tasks and have credible support. |
+| UX Researcher | Inspect cases, challenge coding and plan primary research. | What people remember, do and report, and what remains unknown. |
+| UX Designer | Understand the human context of future design work. | Where articulation, recognition, browsing or navigation becomes difficult. |
+| Interaction Designer | Examine how users move between clues and actions. | Which transitions help or interrupt retrieval and how cues change. |
+| Search / ML / AI team | Separate observed behaviour from possible technical explanations. | Which queries, result interactions or coverage gaps require further diagnosis. |
+| Data / Research Analyst | Produce reproducible, appropriately bounded analysis. | Counts, denominators, source dependence, missingness and coding quality. |
+| Product Strategy / Leadership | Assess whether an opportunity merits deeper research. | Evidence strength, uncertainty, relevance and the cost of remaining unknowns. |
+| Graduation-project researcher | Build a defensible discovery narrative and public demonstration. | A traceable shortlist of problems, limitations and next research steps. |
+
+The end consumer described in the evidence is the subject of research, not the operator of this application. Stakeholders must not mistake public-discussion findings for conclusions about all users.
+
+SECTION G — DATA SOURCE STRATEGY
+
+Maintain three independently labelled corpora with separate record totals, retrieval filters and reporting denominators.
+
+| Corpus | Contents | Permitted use | Counting rule |
+| --- | --- | --- | --- |
+| USER_EVIDENCE | Authentic accounts of retrieval attempts, including relevant context and outcomes. | Behavioural coding, journeys, patterns and corpus-level counts. | Count only qualifying, unique evidence; distinguish main cases from controls and context. |
+| PRODUCT_REFERENCE | Official product help, capability documentation and release information. | Explain intended support, prerequisites and changes in product context. | Never count as user behaviour or towards the 2,000-record target. |
+| COGNITIVE_REFERENCE | Academic literature and clearly labelled educational references. | Frame questions and interpret possible mechanisms cautiously. | Never count as a user case or proof that a mechanism occurred in one. |
+
+In a help thread, the original user's account may be USER_EVIDENCE, while an official capability explanation is reference/context. Classification happens at the relevant content level rather than assigning every message the role of the page hosting it.
+
+RAG may use multiple corpora when a question requires them, but must label the contribution of each. Corpus statistics must never blend the three. Reference-supported explanations and user-reported experiences may disagree; preserve both.
+
+SECTION H — USER_EVIDENCE: PRIMARY PRODUCT
+
+Primary product: Google Photos.
+Google Play package identifier: com.google.android.apps.photos.
+
+Potential sources are Google Play reviews, Google Photos iOS App Store reviews, Google Photos Help Community, r/googlephotos, other relevant Reddit communities, eligible YouTube comments, public forums, public web discussions, carefully selected public LinkedIn posts, and manual imports with source URLs.
+
+These are candidate sources, not assurances of access. Each requires an entry in the source registry identifying its permitted collection and display conditions. Reddit research collection is conditional on applicable approval and terms; public visibility and manual copying do not establish permission. See Sections Y and AT.
+
+Reviews can provide broader coverage of reported experiences. Threads can reveal queries, clarifications, advice, actions and outcomes in greater depth. Neither volume nor thread length establishes representativeness.
+
+Collect retrieval success as well as difficulty. Search plans should include neutral language about finding an image, changing a query, recognising a result and using a workaround, alongside language about failure. Do not select only low ratings or complaints.
+
+Preserve the reported platform, feature, app version and date where available. Distinguish classic search, Ask Photos, browsing, Memories and account navigation only when the source permits that distinction; otherwise record the feature as unknown.
+
+SECTION I — DIRECT COMPETITORS
+
+The core comparison set contains direct or closely adjacent personal-library products. It is not ordered by global market share.
+
+| Product | Why relevant | Primary evidence sources to assess | Retrieval behaviours to compare |
+| --- | --- | --- | --- |
+| Apple Photos / iCloud Photos | Personal visual-library comparator across Apple devices and cloud storage. | Apple Support Community, permitted public discussions and relevant review sources where available. | Person, date, place, text and descriptive clues; browsing and device/cloud uncertainty. |
+| Amazon Photos | Consumer cloud-photo-library comparator. | Eligible app reviews, public support discussions and forums. | Searching remembered people, events or scenes; moving between search and browsing. |
+| Samsung Gallery | Device-gallery comparator in a mobile ecosystem. | Samsung Community, relevant store reviews where available and public discussions. | Local-library navigation, screenshots, albums and uncertain capture times. |
+| Microsoft Photos / OneDrive Photos | Related desktop and cloud-library contexts. | Microsoft public support discussions, eligible reviews and forums. | Device/cloud transitions, folders, visual items and metadata cues. |
+| Dropbox | Adjacent cloud-content retrieval comparator, not an equivalent photo library. | Eligible reviews, public community discussions and forums. | Retrieving saved screenshots/documents through names, folders, content and source context. |
+
+Treat Microsoft Photos and OneDrive as separately identified experiences rather than one feature set. Also distinguish Apple Photos from iCloud storage context in coding.
+
+Do not assume every product has a separate, collectible App Store review corpus or the same search capabilities. Verify product identifiers and source availability before collection. Compare behavioural cases with relevant reference documentation, not inferred feature parity.
+
+SECTION J — INDIRECT COMPETITORS / BEHAVIOURAL ANALOGUES
+
+| Product or community | Behavioural value | Limit on transfer to Google Photos |
+| --- | --- | --- |
+| Pinterest | Investigate visual similarity, saved content and difficulty putting an image into words. | Public or saved web-content discovery differs from exact personal-photo retrieval. |
+| Instagram | Investigate finding a previously seen or saved post/reel through creator, scene or context clues. | The item may never have been saved, and availability may depend on another account. |
+| TikTok | Investigate remembered scenes, audio, dialogue or context during video retrieval. | Video-platform discovery and personal-library search have different coverage. |
+| Google Lens / reverse-image search | Investigate use of a reference image or part of an image as a clue. | A visible reference is a different starting condition from memory alone. |
+| r/HelpMeFind | Investigate how people describe fuzzy visual targets and respond to clarification. | Human assistance and web identification differ from searching a known personal library; Reddit access conditions apply. |
+| r/tipofmytongue | Investigate clue articulation, revision and recognition in memory-based identification. | Many targets are not visual items; include only relevant cases and retain the domain difference. |
+
+These are behavioural analogues and not necessarily commercial competitors. Additional visual-search platforms may be included only when the research question and access route justify them.
+
+Do not pool analogue cases into Google Photos-specific statistics. Record whether the task is exact retrieval, rediscovery, identification or finding similar content. Similarity discovery without a remembered target belongs in contextual analysis rather than the main corpus.
+
+SECTION K — PRODUCT_REFERENCE CORPUS
+
+Collect official documentation for Google Photos search, Ask Photos, Google Photos Help, Apple Photos search, Amazon Photos retrieval, Samsung Gallery search, Microsoft Photos, OneDrive photo search, Dropbox retrieval and Pinterest visual search. Add release information when it explains a relevant feature change.
+
+PRODUCT_REFERENCE describes intended support and prerequisites. It does not demonstrate what users attempted, what they remembered or whether a search worked for them.
+
+Each reference should retain its title, publisher, URL, access date, publication/update date when available, platform, region/language caveats and applicable feature/version context. Where documentation does not establish a capability, record it as unresolved rather than absent.
+
+Verified starting references, accessed 6 October 2026:
+
+[K1] Google Photos — Search by people, things and places in your photos.
+https://support.google.com/photos/answer/15235862?co=GENIE.Platform%3DDesktop&hl=en-IN
+
+[K2] Google Photos — Use Ask Photos to search, edit and get assistance.
+https://support.google.com/photos/answer/15318661?co=GENIE.Platform%3DAndroid&hl=en-GB
+
+[K3] Apple — Search for photos and videos on iPhone.
+https://support.apple.com/en-mide/guide/iphone/-iph392d77d5f/ios
+
+These references already document search capabilities beyond a simple date-only interface. Therefore, the research must examine supported use, observed behaviour and remaining gaps rather than assume descriptive search is missing. Capability availability can vary by device, region, account, language and version. These references are a baseline, not an exhaustive feature audit.
+
+SECTION L — COGNITIVE_REFERENCE CORPUS
+
+Collect literature covering retrieval cues, cue-dependent recall, encoding specificity, recognition versus recall, episodic memory, autobiographical memory, visual imagery, reconstructive memory, interference, source-memory errors, context-dependent retrieval, and memory accessibility versus availability.
+
+Prioritise peer-reviewed primary studies and reviews, academic journals, academic books, PubMed/PMC and reputable university sources. Secondary educational material may support orientation but must be labelled and must not anchor major research claims where stronger evidence is needed.
+
+For each reference, record the research question, study population, task, central result, limitations, citation/DOI when available and relevance to this project. Access through PubMed/PMC does not by itself establish quality or applicability.
+
+Use cognitive concepts to ask better questions and consider alternative explanations. Do not diagnose a user's memory, equate search failure with a cognitive deficit, or claim that recognition always outperforms recall. A study of laboratory memory does not directly establish behaviour in a personal photo library.
+
+The current document defines topics for later literature collection. It does not claim that a literature review has been completed or that any cognitive mechanism is validated for the target users.
+
+SECTION M — INCLUSION CRITERIA
+
+Accept a main-corpus case when the available account supports all of the following:
+
+1. A user knows or believes a specific visual item exists or was encountered.
+2. The user wants or wanted to retrieve that item.
+3. The target is an eligible visual-media item.
+4. Retrieval involves supported incomplete, approximate, uncertain, potentially incorrect or difficult-to-articulate memory; cue evolution; recognition as part of retrieval; browsing after a relevant search difficulty; or source/account uncertainty.
+
+Prefer accounts containing at least one concrete cue, action, query, transition or outcome beyond generic praise or criticism. No complete journey is required. Ambiguous cases remain in a review queue and are excluded from accepted statistics until resolved.
+
+Separate categories:
+
+- MAIN_INCOMPLETE_MEMORY: qualifies under the rules above.
+- PRECISE_MEMORY_SYSTEM_FAILURE: the user reports a precise cue, such as an exact keyword, and search still fails. This is a control for comparing memory-related difficulty with possible system or coverage problems; it does not prove a technical defect.
+- CONTEXT_ONLY: relevant advice or background without an eligible personal retrieval account.
+- EXCLUDED or NEEDS_REVIEW: outside scope or unresolved.
+
+Controls and context must have separate denominators and do not satisfy the main 2,000-record target. Advice, feature requests and official replies may contextualise a case but must not masquerade as an attempted action.
+
+SECTION N — EXCLUSION CRITERIA
+
+Exclude backup-only issues, deleted-photo recovery, storage pricing, generic crashes, upload issues, sharing problems, editing problems, privacy complaints, sync-only issues, account login problems and generic sentiment without retrieval behaviour from the main corpus.
+
+An otherwise excluded issue may be retained when it directly affects an eligible retrieval journey. For example, a searcher uncertain about which account contains an image may qualify; inability to sign in with no remembered-item retrieval attempt does not. Record the interaction rather than treating every account complaint as source uncertainty.
+
+Also exclude general browsing, finding any attractive image, fictional examples presented as evidence, duplicated accounts, unverified imported text and unsupported feature speculation. Hypothetical wishes can be contextual material but are not evidence of actual attempts.
+
+Give every excluded record one primary exclusion reason and optional secondary reasons. Retain collection accounting without retaining unnecessary content. Do not discard a record because it is short, positive, negative, contains emojis or describes success.
+
+SECTION O — REQUIRED EVIDENCE VOLUME
+
+Target: at least 2,000 unique, verified, relevant USER_EVIDENCE records in the main incomplete-memory corpus after deduplication, relevance filtering and source verification.
+
+An evidence record is a source message or review, not an extracted sentence, cue, chunk or AI summary. Multiple eligible messages can document one case; do not count them as independent experiences. Context-only comments do not increase the target. Report record count, distinct retrieval-case count and conversation count separately.
+
+Verification establishes that retained content came from the identified source and is relevant under the documented rules. It does not prove every reported event or independently confirm the user's outcome. Human-reviewed interpretation is a separate status.
+
+If the target is not reached, report collected records, unique records, duplicates, exclusions by reason, unresolved records, verified qualifying records, control records, independent cases, inaccessible sources and the shortfall reason. Use an explicit collection waterfall and a corpus snapshot date.
+
+Never synthesize reviews, expand one story into several invented cases or loosen scope to meet the target. Quality and provenance override the quota. A smaller corpus may support a useful demonstration, but the volume criterion must remain visibly unmet.
+
+SECTION P — END-TO-END PRODUCT FLOW
+
+| Step | System action | Inspectable result or checkpoint |
+| --- | --- | --- |
+| 1. Research configuration | Set question, products, media, languages, dates, budget and inclusion rules. | Versioned research configuration. |
+| 2. Source selection | Check candidate sources and applicable access/display conditions. | Source registry with enabled, conditional and unavailable sources. |
+| 3. Data collection | Retrieve eligible content or accept a permitted import. | Batch log, capture method and collection status. |
+| 4. Raw evidence storage | Store the source capture before analysis, subject to minimisation and retention rules. | Source-linked raw record independent of interpretation. |
+| 5. URL canonicalisation | Resolve equivalent links without losing message-specific identity. | Canonical URL plus original URL. |
+| 6. Cleaning | Remove spam, malformed/empty content and unnecessary personal identifiers. | Cleaned derivative and reasons. |
+| 7. Deduplication | Identify exact duplicates and review likely repeated accounts. | Duplicate groups and retained canonical records. |
+| 8. Language detection | Label language and translation needs. | Original text and separately labelled translation. |
+| 9. Thread reconstruction | Connect available messages, speakers and reply order. | Context with missing/deleted segments marked. |
+| 10. Retrieval-relevance classification | Separate main cases, controls, context and exclusions. | Decision, rationale and review status. |
+| 11. Memory-cue extraction | Extract supported clues and source spans. | Cue profile. |
+| 12. Uncertainty extraction | Preserve approximations, doubts and possible corrections. | Cue states and unknowns. |
+| 13. Search-behaviour extraction | Identify actual queries, actions and confirmed workarounds. | Supported behavioural sequence. |
+| 14. Retrieval-journey reconstruction | Link reported transitions; leave gaps visible. | Complete or partial case journey. |
+| 15. Outcome classification | Record found, partial, failed, abandoned or unreported outcomes. | Outcome with its support and reporting basis. |
+| 16. Root-problem coding | Code observed breakdowns and separate possible explanations. | Versioned codes and tentative hypotheses. |
+| 17. Embedding generation | Represent eligible text for semantic retrieval/grouping. | Search representation linked to record IDs. |
+| 18. Semantic clustering | Group similar cases without forcing a fixed theme set. | Inspectable candidate clusters and outliers. |
+| 19. Quantitative analysis | Compute counts and rates for explicitly defined populations within the corpus. | Reproducible tables with denominators. |
+| 20. Qualitative analysis | Examine sequences, contexts, successes and negative cases. | Evidence-linked analytic notes. |
+| 21. Contradiction detection | Search for competing accounts and boundary conditions. | Supporting and challenging evidence. |
+| 22. Human validation | Review ambiguity, important findings and evaluation samples. | Corrected, auditable annotations. |
+| 23. Vector / RAG indexing | Publish eligible, current analysis and context to research indexes. | Versioned searchable corpus. |
+| 24. Evidence exploration | Allow filtering and drill-down. | Source-first evidence views. |
+| 25. Ask Research | Answer bounded questions using retrieved evidence. | Cited response or insufficiency statement. |
+| 26. Opportunity analysis | Compare problems using observed signals and declared assumptions. | Defensible opportunity shortlist. |
+| 27. Research report generation | Assemble selected findings, methods and limitations. | Reproducible report with citations. |
+| 28. Optional Google Docs export through MCP | Send an explicitly selected report to an authorised destination. | Export status and document link. |
+
+This is the logical flow, not a requirement for a rigid linear runtime. Review corrections can return a record to analysis. Withdrawals or source deletions must propagate to derived analysis, statistics and indexes as required. Analyses must identify their corpus and annotation versions.
+
+SECTION Q — MEMORY-CUE MODEL
+
+Support cues concerning person, relationship, approximate time, exact date, life period, event, location, relative location, object, clothing, colour, background, action, emotion, weather, season, occasion, who took or sent the item, app/source, purpose for saving it, before/after context, visible text, event sequence, conversation context, device, media format, visual layout/composition, a similar/reference image, and other emergent clues.
+
+For each cue preserve its type, source wording, normalised description, source span, owner/speaker, reported journey position, state, origin and evidence label. Do not turn an approximate year into a precise date or a relationship into an invented identity.
+
+| Cue state | Meaning | Evidence requirement |
+| --- | --- | --- |
+| CONFIDENT | The user presents the cue with expressed certainty. | Preserve that expression; confidence is not proof the cue is correct. |
+| APPROXIMATE | The user gives a rough range or estimate. | Keep the range or qualifying language. |
+| UNCERTAIN | The user expresses doubt. | Retain words indicating uncertainty. |
+| POSSIBLY_WRONG | The user questions or revises a clue as potentially incorrect. | Link the doubt or correction to its source. |
+| CONTRADICTORY | Accounts of the same cue conflict. | Preserve both versions and indicate whether the conflict is resolved. |
+| FORGOTTEN | The user explicitly states they cannot remember the cue. | An unmentioned cue never qualifies. |
+| NEWLY_RECALLED | A clue becomes available later in the reported attempt. | Support its later emergence and link the transition if reported. |
+
+These states need not be mutually exclusive. A newly recalled clue may remain uncertain. Unqualified statements are recorded as stated without explicit certainty, rather than automatically marked CONFIDENT. Not mentioned, not applicable and unknown are distinct from FORGOTTEN.
+
+The engine must not infer demographic, medical or other sensitive attributes from cues. A reference to a cousin or friend is task context, not a basis for identifying that person.
+
+SECTION R — CUE EVOLUTION
+
+Cue evolution is a core research dimension. The engine must examine whether a clue is added, refined, contradicted, discarded or corrected during retrieval and whether the source identifies what triggered that change.
+
+Required concepts:
+
+- initially_accessible_cues: clues reported as available at the start, not all clues mentioned anywhere in the thread.
+- new_cue_trigger: a reported result, action or event preceding a newly recalled or revised clue.
+- newly_recalled_cues: supported later additions.
+- cue_evolution_sequence: the ordered cue changes with supporting message/span references.
+- did_recognition_trigger_recall: yes, no or unknown, with evidence and distinction between an explicit statement and an interpretation.
+- external_cue_trigger: a trigger outside the current search results, when reported.
+
+Potential triggers include another search result, a nearby photo, a surfaced Memory, another device, another application, another person, a notification, a physical event or another related image. These are observation categories, not assumed effects.
+
+Seeing a result before mentioning a clue does not establish that the result caused recall. When the relationship is only plausible, label it AI_INTERPRETATION or RESEARCH_HYPOTHESIS. An account containing one final query cannot establish the user's initial memory.
+
+Use explicit changes to challenge early coding. Later correction must not silently replace the original cue; both belong to the same evolving case.
+
+SECTION S — RETRIEVAL JOURNEY MODEL
+
+A journey represents one reported attempt to recover a target item. A source record, conversation and retrieval journey are different units: one thread may contain several attempts, and several messages may describe one attempt.
+
+An illustrative sequence is need → vague memory → first search → poor results → newly accessible clue → reformulation → browsing/filtering → account/app switch → workaround → outcome. It is a starting model, not a required path.
+
+For every supported step capture the action, query or clue where available, actor, product/account context at a non-identifying level, step order, reported system response, source support and certainty of ordering. Keep an attempted workaround separate from advice offered by someone else.
+
+Allow loops, skipped stages, resumed attempts and partial journeys. A post that only describes scrolling should not acquire an invented first search. Collection timestamps must not substitute for the time of the attempt.
+
+Outcome labels:
+
+- FOUND: user reports finding the intended item; mark self-reported confirmation.
+- PARTIAL: a related item or some needed information is found, while the exact target remains unresolved.
+- FAILED: user explicitly reports an unsuccessful attempt without confirming abandonment.
+- ABANDONED: user reports stopping or deferring the attempt.
+- NOT_REPORTED: the account does not give an outcome.
+- UNCLEAR: outcome language is present but cannot be reliably interpreted.
+
+No reply is NOT_REPORTED, not failure. Finding the correct event is not necessarily finding the exact photo. Later success can update the case through a versioned annotation while preserving earlier failed stages.
+
+SECTION T — RETRIEVAL BREAKDOWN TAXONOMY
+
+Starter codes include memory limitation, query-articulation difficulty, visual-to-verbal representation gap, query-understanding failure, metadata mismatch, indexing/tagging failure, OCR failure, person-recognition gap, ranking failure, incomplete result set, similar-results overload, date uncertainty, location uncertainty, source/account uncertainty, cross-platform fragmentation, browsing/navigation overload, combined problems and unknown.
+
+These are provisional starter codes. Researchers must be able to add emergent codes, revise definitions and retain unclassified cases. The engine must not force every record into a predetermined category or treat multiple labels as mutually exclusive.
+
+Keep three levels distinct:
+
+1. Observed or reported symptom: the user did not see the desired item after a particular action.
+2. Breakdown classification: the supported difficulty, such as uncertainty about the date or navigating many similar results.
+3. Root-cause hypothesis: a possible explanation requiring additional validation.
+
+Technical codes such as OCR, indexing or ranking failure require appropriate evidence. If a user says a remembered word returned no result, the symptom is supported; OCR failure remains a possible explanation alongside wrong memory, absent content, scope limitations or other causes.
+
+Each code needs a definition, inclusion boundary, exclusion boundary and source-backed examples once collected. Codebook changes must be versioned so historical comparisons remain interpretable.
+
+SECTION U — RAW DATA REQUIREMENTS
+
+This section specifies information requirements, not a database schema or migration. Storage design follows approval.
+
+| Conceptual field group | Required fields or information |
+| --- | --- |
+| Identity and corpus | evidence_id, corpus_type, source_platform, source_type, product_name, product_id, source_record_id. |
+| Provenance and context | source_url, canonical_url, parent_thread_url, thread_id, parent_message_id, sequence_in_thread. |
+| Time and source metadata | published_at, collected_at, country_market, language, rating, helpful_score. |
+| Source content | title, original_text and relevant source-context references. |
+| Collection and verification | collection_method, collection_batch_id, verification_status, source_access_notes. |
+
+Require a stable evidence_id, corpus classification, source platform/type, source locator, collection time/method/batch, retained source text and verification status before acceptance. Other fields may be unknown or not applicable. A missing rating, exact date or country is not a reason to fabricate one.
+
+Record where metadata came from. A store-country setting is not the author's nationality or location. A helpfulness score is source metadata, not a validity or severity measure. Keep publication and collection times separate and preserve date precision/timezone where available.
+
+Retain source-specific IDs when permitted, and use explicit review-level locators for records sharing a product-page URL. A broad app listing alone does not identify a particular review. Search snippets can identify candidate sources but are insufficient as verified source captures without suitable original context.
+
+The source capture is independent of cleaned text, translation and AI interpretation. Preserve a content fingerprint and capture/version history where appropriate. Minimise unnecessary personal identifiers before durable retention; a required withdrawal or deletion overrides ordinary immutability and must invalidate affected derivatives.
+
+SECTION V — AI ANALYSIS REQUIREMENTS
+
+Store analysis as separately versioned annotations linked to evidence and retrieval cases. Do not overwrite source content.
+
+Required conceptual information includes:
+
+- Identity and audit: analysis_id, evidence_id, related case/message IDs, model_name, analysis_prompt_version, analysed_at and human-review status.
+- Scope: retrieval_relevance, relevance_score where evaluated, target_media_type and what_user_wanted_to_find.
+- Memory: remembered_cues, forgotten_cues, uncertain_cues, possibly_wrong_cues, cue_states and cue_origin.
+- Actions: initial_query, search_strategy, subsequent_actions, external_cue_trigger, newly_recalled_cues, recognition_triggered_recall and workaround.
+- Journey and interpretation: retrieval_outcome, failure_point, problem_code and root_cause_hypothesis.
+- Reported impact: effort_signal and severity_signal.
+- Support and uncertainty: evidence_type, confidence, source spans, extraction rationale and alternative interpretations.
+
+For forgotten_cues, require an explicit inability-to-remember statement. For initial_query, require a reported actual query; otherwise record not reported. A paraphrase of the search goal must not be displayed as verbatim input.
+
+Effort and severity require reported signals. Exact minutes, attempt counts or importance levels are entered only when supported; adjectives such as frustrating remain qualitative signals. Negative sentiment and low ratings do not automatically indicate severe retrieval harm.
+
+Separate source verification, relevance, extraction certainty and pattern-level confidence. A model's self-rated number is not a calibrated probability. Numeric confidence should be introduced only with evaluation; otherwise show understandable labels and their basis. Unknowns remain unknown and are visible in analysis.
+
+SECTION W — DIRECT EVIDENCE VS AI INTERPRETATION
+
+| Mandatory evidence label | Meaning | Display and analytical rule |
+| --- | --- | --- |
+| DIRECT_STATEMENT | The source explicitly reports a cue, action, belief or outcome. | Show the exact supporting span and retain speaker attribution. |
+| STRONGLY_IMPLIED_BEHAVIOUR | Context strongly supports behaviour that is not directly stated. | Mark it as implied, explain the inference and allow review. |
+| AI_INTERPRETATION | The model proposes a meaning, grouping or explanation. | Display separately from what the source says; do not treat it as a quote or fact. |
+| RESEARCH_HYPOTHESIS | A broader explanation or relationship needs testing. | Show supporting and challenging evidence and a validation question. |
+
+Apply labels to claims, not only whole records. A direct quotation can sit beside an inferred failure point; the quotation must not lend false certainty to that inference.
+
+Translations and shortened excerpts need separate labels. A summary written by the model is not the user's wording. Preserve original language and relevant negation/context when quoting.
+
+Default quantitative claims about reported actions/outcomes should use DIRECT_STATEMENT support. If an analysis includes strongly implied behaviour, disclose that choice and provide a direct-only comparison where useful. Hypotheses and unreviewed AI explanations must never become counts of confirmed events.
+
+SECTION X — CONVERSATION RECONSTRUCTION
+
+For community threads retain the available original post, replies, clarifications, proposed workarounds, original-poster responses and outcome statements. Keep reply-to relationships and distinguish participants using scoped pseudonymous labels when needed.
+
+A suggested workaround is not an attempted workaround unless the relevant user confirms attempting it. A commenter describing their own experience may contribute a separate case, but does not determine the original poster's outcome. A developer or moderator reply is not a consumer retrieval account.
+
+Do not flatten multiple speakers into one journey. Preserve order when supported by timestamps, reply relationships or the account itself. Mark unavailable, deleted or truncated content and uncertainty about chronology. Thread length is not a count of independent retrieval failures.
+
+When a connector returns only part of a thread, disclose the missing coverage. YouTube's commentThread resource may omit some replies; complete permitted reconstruction can require separate comments.list retrieval [Y2]. Do not declare a discussion resolved based on an incomplete capture.
+
+Keep source links to the relevant message or an identifiable source record. AI synthesis must receive enough context to avoid mistaking sarcasm, a correction, a quoted earlier message or another speaker's advice for the user's own action.
+
+SECTION Y — DATA COLLECTION STRATEGY
+
+Use the staged philosophy described in the named “26 NL Build Hours — AI Agent and MCP” reference: source configuration, public review collection, raw export, staged processing, scheduling, optional MCP delivery and phase-wise work. The lecture itself is not attached to this request; its precise implementation details remain unverified. Do not claim to have followed unseen code, endpoints or cleaning rules.
+
+Collection configuration must support products, source routes, languages, countries/markets, date windows, query sets, pagination/checkpoints, access conditions, rate limits and a per-run budget. Keep credentials outside data exports and public clients.
+
+| Source | Required collection approach | Limitations to surface |
+| --- | --- | --- |
+| Apple App Store | Public review pages/feeds or another approved route where available. Support APP_STORE_ID and APP_STORE_COUNTRY. Verify the app ID before enabling a collector. | Route availability, review caps, locale and missing metadata. Developer-owned review APIs are not assumed to provide third-party access. |
+| Google Play | PLAY_STORE_PACKAGE=com.google.android.apps.photos; interchangeable, permitted public-review collection or a permitted manual import. | No assumption of an unrestricted official public-review API. We do not own Google Photos. |
+| Reddit | Only an approved route for the research use case under applicable current terms. | Research eligibility, approval, permitted AI processing, retention and redistribution. Disable collection when these are unresolved. |
+| YouTube | YouTube Data API for eligible public comments, with permitted thread/reply collection. | Disabled comments, inaccessible videos, quota, incomplete replies and applicable retention/display rules. |
+| Public communities/forums/web | Source-specific permitted API, public page collection or import. | Page access, robots/access restrictions, missing context and reuse conditions. |
+| LinkedIn and other restricted platforms | Assess the allowed route; use a manual import only if the intended use is permitted. | Public visibility does not establish collection or republication rights. |
+| Manual CSV / JSON / public URL | Accept genuinely sourced, permitted records with locators and capture context. | Imported content remains unverified until checked; imports cannot bypass a source restriction. |
+
+Google Play's official review-management API serves authorised access to a developer's own app; the project must not depend on it for Google Photos [Y1]. YouTube supports comment-thread collection, with separate reply retrieval where needed [Y2–Y3].
+
+Reddit's current Responsible Builder Policy requires approval for API access and restricts research outside its approved researcher programme. Its programme has eligibility and data-sharing conditions. The project must not assume a graduation researcher qualifies or that permission permits a public raw-evidence dashboard [Y4–Y5]. If approval is unavailable, mark Reddit unavailable and use other permitted sources.
+
+Collection references verified 6 October 2026:
+
+[Y1] Google Play — Reply to Reviews.
+https://developers.google.com/android-publisher/reply-to-reviews?authuser=2&hl=en
+[Y2] YouTube Data API — API Reference, CommentThreads and Comments.
+https://developers.google.com/youtube/v3/docs
+[Y3] YouTube Data API — CommentThreads: list.
+https://developers.google.com/youtube/v3/docs/commentThreads/list
+[Y4] Reddit — Responsible Builder Policy.
+https://support.reddithelp.com/hc/en-us/articles/42728983564564-Responsible-Builder-Policy
+[Y5] Reddit — Reddit for Researchers Program.
+https://support.reddithelp.com/hc/en-us/articles/49381918834964-Reddit-for-Researchers-Program
+
+Recheck conditions before future collection. Do not acquire new permissions, collect evidence or create scheduled jobs during this document-only step.
+
+SECTION Z — COLLECTION CONNECTOR PRINCIPLE
+
+Define a common SourceConnector responsibility with possible implementations named AppStoreConnector, PlayStoreConnector, RedditConnector, YouTubeConnector, PublicURLConnector, ManualCSVConnector, ManualJSONConnector and AcademicSourceConnector.
+
+Every connector must expose its supported corpus/source types, configuration requirements, access status, source verification information, collection boundaries, checkpoint state and errors. It must return normalisable records with provenance, rather than undocumented source-specific data that downstream analysis must guess at.
+
+The research pipeline must remain independent of the mechanism used by a particular collector. Replacing an unavailable review collector with a permitted import must not change inclusion rules, evidence labels or denominators.
+
+Failures must be distinguishable: no results, unsupported route, missing configuration, permission denied, rate limited, source unavailable and malformed response. A blocked request is not a successful zero-record collection.
+
+External content is untrusted data. Page text, comments and imports must not instruct an agent to execute code, reveal credentials, change access or trigger exports. Public-URL collection must reject internal/local addresses and unsafe redirect targets. These requirements do not prescribe a framework or create application code.
+
+SECTION AA — CLEANING REQUIREMENTS
+
+Create a cleaned analysis derivative while preserving the meaning and provenance of the source capture under the source's retention conditions.
+
+Remove or flag spam, malformed records, exact duplicates, empty/no-information records and clearly irrelevant content. Preserve emojis, negation, uncertainty markers, query wording, slang and short retrieval accounts when they carry meaning. Do not impose a minimum word count or exclude positive or negative sentiment by default.
+
+Separate relevance filtering from text cleaning. A readable but irrelevant review needs an exclusion reason, not a rewritten narrative. Potential spam or ambiguous language should be reviewable rather than silently converted into valid evidence.
+
+Record original language, translation method and translation version. Do not discard non-English content merely because the selected analysis model cannot process it; label that processing gap. Do not treat translated and original copies as separate evidence.
+
+Minimise personal identifiers while retaining task-relevant context. Redactions must be visible and must not be filled in by the model. Keep a cleaning log so a researcher can understand why a record changed or was excluded.
+
+SECTION AB — DEDUPLICATION
+
+Detect repeated source records, duplicate exports, equivalent canonical URLs with identical message identity, duplicated comments, syndicated reviews and confidently repeated cross-posted accounts.
+
+Use source IDs and exact content checks first. Near-duplicate text is a candidate for review, not proof of duplication. Similar complaints from different people are independent evidence. Edited messages may be versions of one source record rather than new cases.
+
+Maintain duplicate_group_id, the canonical retained record, aliases to original source locators, the deduplication reason and review status. Preserve useful extra context without counting the same account repeatedly.
+
+Do not merge every review sharing an app-listing URL or every reply sharing a thread URL. Record identity requires the review/message locator and other source information.
+
+Statistics operate on canonical unique evidence. Counts of independent cases must additionally account for messages describing the same attempt and confident repeated accounts across threads. Chunking for RAG, translations, embeddings and reanalysis never create additional evidence.
+
+Uncertain cross-post duplication must remain explicit, with a sensitivity note if it materially affects a finding. Do not identify or link people across platforms to solve deduplication.
+
+SECTION AC — AI / AGENTIC PIPELINE
+
+Use modular responsibilities with validated intermediate outputs, rather than one giant prompt. Names below describe stages and do not require autonomous agents, multiple concurrent agents or a particular orchestration framework.
+
+| Stage | Responsibility | Required output / boundary |
+| --- | --- | --- |
+| Relevance Agent | Apply eligibility and control rules to source text plus context. | Category, reason, supporting spans and unresolved ambiguity. |
+| Memory Cue Extraction Agent | Identify reported clues and states. | Cue annotations with no invented gaps or confidence. |
+| Behaviour Extraction Agent | Identify actual queries, actions and confirmed workarounds. | Speaker-attributed behaviour separated from advice. |
+| Journey Reconstruction Agent | Link supported steps and cue changes. | Partial/complete sequence with unknown order and outcome preserved. |
+| Problem Coding Agent | Apply current codes and propose emergent labels. | Observed breakdowns separate from root-cause hypotheses. |
+| Embedding Layer | Create linked semantic representations of eligible content. | Record/chunk mappings with corpus and version metadata. |
+| Cluster / Pattern Analysis Agent | Propose similarities and meaningful groupings. | Candidate clusters, outliers and member evidence IDs. |
+| Evidence Validation Agent | Check attribution, source spans, contradictions and rule violations. | Flags and review priorities; automated checking is not human approval. |
+| Research Synthesis Agent | Summarise supported findings and research gaps. | Cited findings with limits and alternative explanations. |
+
+Deterministic checks should validate required information, references and allowed labels. Human review resolves ambiguous cases and validates important findings. Rejected or low-confidence outputs must not silently enter accepted statistics.
+
+Record model and prompt versions, inputs, processing errors, cost/usage and status. Retry transient failures within a budget; do not repeatedly process the full corpus when only new or corrected records need work. New analysis versions must not silently change previously published reports.
+
+SECTION AD — QUANTITATIVE ANALYSIS
+
+Support qualifying evidence count, unique conversation count, distinct retrieval-case count, source/product/media distributions, outcomes, cue frequency and co-occurrence, retrieval strategies, problem codes, attempted workarounds, reported effort/severity, abandonment, source breadth, product breadth and cluster membership.
+
+Each result must show its unit of analysis, numerator, denominator, filters, date range, corpus snapshot and missing/unclear count. Rates based on cases must not use message counts as their denominator.
+
+Default rules:
+
+- Cue or behaviour frequency: count each eligible case once per category, not each repeated mention.
+- Co-occurrence: specify that the cues appear within the same case; do not infer that they appeared together in the initial query.
+- Outcomes: show all outcome categories. If success among known outcomes is calculated, also show the number and share with unreported/unclear outcomes.
+- Multi-label codes: disclose that percentages can sum above 100%.
+- Product/source comparisons: display sample size and collection differences side by side.
+- Corpus-wide totals: compute over the full eligible filtered dataset, not the top RAG results.
+- Temporal patterns: separate publication time, reported attempt time and collection time.
+
+Use phrasing such as “Among qualifying Google Photos cases in this collected corpus…” Never convert a corpus rate into “X% of Google Photos users.” Avoid representative-sample language, population confidence intervals or causal claims that the sampling design cannot support.
+
+Show record-based statistics when appropriate, but label them as such. Related messages, unknown authorship, source selection and repeated discussions limit claims about independent people. Absence of a cue in a public account does not establish that the person lacked it.
+
+Required quantitative visual analysis
+
+The final dashboard must visualise the quantitative analysis, rather than present only metric cards, tables or generated text. Choose the visual according to the question, measurement and available evidence.
+
+| Analysis question | Preferred visual | Data and interpretation requirement |
+| --- | --- | --- |
+| Where does the collected evidence come from? | Horizontal bars by source/product; a simple part-to-whole chart where appropriate. | Separate main cases, controls and context; label record counts versus distinct-case counts. |
+| What outcomes are reported? | Bars or stacked bars for FOUND, PARTIAL, FAILED, ABANDONED, NOT_REPORTED and UNCLEAR. | Retain unreported/unclear outcomes and the complete case denominator. |
+| Which cues, actions and breakdowns recur? | Ranked horizontal bar charts, with count/share controls. | Count a case once per category and disclose overlapping labels. |
+| Which cues appear together? | Cue co-occurrence heatmap. | State whether cells show counts or a defined conditional rate; repeated messages must not inflate cells. |
+| How do reported patterns differ by product or media? | Grouped bars, small multiples or a comparison heatmap. | Show each subgroup's denominator, unknowns and collection differences. |
+| How much effort is explicitly reported? | Histogram for numeric duration/attempt counts; category bars for qualitative effort signals. | Use consistent units and supported values only; show how many cases lack usable effort data. |
+| How does the corpus change over time? | Line chart or time-binned bars when comparable periods exist. | Identify the time basis and collection coverage; collection growth is not growth in user problems. |
+
+Pie charts or doughnut charts are permitted for simple composition questions with a small number of mutually exclusive, collectively exhaustive categories and a clear non-zero total. Prefer bars when comparison is clearer or categories are numerous. Never use a pie for overlapping cues, themes or problem codes, or omit unknown outcomes to produce a cleaner picture. Any Other category must be defined and expandable.
+
+Use zero-based axes for count/comparison bars, consistent comparison scales, readable units and honest rounding. Avoid 3D charts, decorative effects and unsupported trend lines. A numerical zero, missing observation and insufficient evidence must remain distinguishable. Any uncertainty indicator must identify its basis; do not invent statistical error bars from a convenience corpus.
+
+SECTION AE — QUALITATIVE ANALYSIS
+
+Support open coding, axial grouping, affinity grouping, journey identification, cue evolution, tentative root-cause explanations, success/failure patterns, abandonment, workarounds, negative cases, representative examples and comparisons by source/product/media type.
+
+Begin with supported actions and context before assigning mechanisms. Keep analytic notes tied to evidence IDs and source spans. A theme should describe a meaningful behavioural pattern, not merely repeat a topic such as search or frustration.
+
+Every important finding must state what was observed, which cases support it, where it applies, what challenges it, what is missing, the analyst's confidence and the next question required for validation. Representative examples must reflect the cluster rather than only its most dramatic account.
+
+Preserve disagreements between coders and between the evidence and an initial hypothesis. Do not claim saturation just because a collection cap or quota was reached.
+
+Public accounts usually provide retrospective self-report. They can identify patterns and questions, but cannot substitute for observing a user's actual query, memory changes, library scope and result interactions. Later primary research should test the most consequential uncertainty.
+
+Required qualitative visual analysis
+
+The final dashboard must also show qualitative structure and context. A frequency chart alone does not communicate a user's experience, an evolving clue or an unresolved explanation.
+
+| Qualitative output | Required visual representation | Evidence requirement |
+| --- | --- | --- |
+| Affinity analysis | An affinity map or grouped theme cards containing codes, short permitted excerpts and linked cases. | Preserve emergent themes, overlapping membership, outliers and reviewed/provisional status. |
+| Behaviour and breakdown themes | An expandable theme map showing themes, subthemes and supporting/challenging evidence. | Labels describe observed behaviour; proposed mechanisms remain hypotheses. |
+| Retrieval experience | A journey map showing reported actions, accessible clues, breakdowns, workarounds and outcome. | Show only supported steps and mark missing order/context. |
+| Memory reconstruction | A cue-evolution timeline showing original, newly recalled, revised and discarded clues. | Link each change and any reported trigger to its source span. |
+| Conflicting experiences | A comparison matrix or paired evidence cards for a pattern and its negative cases. | Compare similar contexts and retain success as well as difficulty. |
+| Possible underlying explanations | An optional hypothesis map connecting observations, alternative explanations and validation questions. | Links indicate analytic relationships, not proven causation; include uncertainty and contrary evidence. |
+
+Qualitative cards may show distinct supporting-case counts, but must also explain meaning and context. Counts are corpus recurrence, not proof of importance. Display exact source excerpts separately from summaries and interpretations; quotes must be genuine, permitted and attributable to evidence IDs.
+
+Word clouds may be an optional exploration aid, but cannot serve as the primary qualitative finding or replace coding, affinity analysis, journeys and contradictory cases.
+
+SECTION AF — PATTERN / CLUSTER DISCOVERY
+
+Combine structured cue/action/outcome comparisons with semantic grouping. Embeddings can suggest similar language or experiences; they do not establish a common cause.
+
+Every cluster must retain its label, definition, inclusion boundary, version, member evidence IDs, distinct case count, source/product/media coverage, representative cases, negative cases and review status. Keep outliers and ungrouped evidence visible.
+
+Required traceability chain:
+Cluster → member evidence IDs → source text and conversation context → original source locator.
+
+Cluster size must not be described as independent users without appropriate evidence. A broad cluster may need splitting when it combines different targets, stages or outcomes. Several clusters may share the same case; overlap must be disclosed.
+
+Researchers can merge, split or rename groups without changing raw source evidence. Significant membership or codebook changes invalidate dependent summaries until refreshed. Emerging patterns must not be forced into a prescribed count or ranked solely by volume.
+
+No opaque AI theme can appear as a confirmed finding without inspectable members and support. A polished title is not evidence quality.
+
+SECTION AG — RAG REQUIREMENTS
+
+Required research-question flow:
+Question interpretation → explicit scope and metadata filters → full-text plus semantic retrieval → ranking → conversation reconstruction → synthesis → claim-level citations and uncertainty.
+
+Use hybrid retrieval where practical. Exact query strings, product names and text fragments need lexical support; conceptual questions need semantic retrieval. Enforce corpus and eligibility filters before synthesis, and collapse repeated chunks or messages describing the same case where necessary.
+
+Separate two answer paths:
+
+1. Examples and qualitative synthesis: retrieve relevant passages and surrounding context, then cite specific support.
+2. Counts and rates: run a reproducible structured calculation over the eligible filtered corpus, then explain the result and cite supporting cases as examples.
+
+Do not calculate prevalence from a top-k retrieval sample. Do not silently expand product, date, language or corpus filters to obtain a more confident answer.
+
+Answers must expose evidence IDs, supporting excerpts, source links, corpus type, coverage limits, conflicting cases and the corpus/analysis version. Reference documents can explain intended capabilities or cognitive theories but must not fill missing user behaviour.
+
+The model must not answer research claims from its general memory. Retrieved source content is data, not instructions. Citations must resolve to retained eligible records and support the adjacent claim; mere citation presence is insufficient.
+
+SECTION AH — ASK RESEARCH BEHAVIOUR
+
+Example questions:
+
+- How do users search for screenshots when they remember the purpose but not the date?
+- Show cases where a result reminded the user of another clue.
+- Which reported problems appear across Google Photos and Apple Photos?
+- Which workarounds are confirmed as attempted after normal search fails?
+- Where do users switch from search to scrolling?
+- What evidence suggests recognition helped later recall?
+
+Use the current corpus and selected filters. When the question is ambiguous, show the scope used or request a brief clarification. A request for source examples should return examples directly without an unnecessary long synthesis.
+
+For substantive answers include:
+
+- Finding: a concise statement supported by retrieved evidence.
+- Evidence coverage: counts of retrieved unique cases, relevant source/product coverage and whether the response is exhaustive or example-based.
+- Patterns: supported similarities and differences.
+- Contradictory evidence: relevant challenges, or a statement that none was found in the searched scope; absence is not proof none exists.
+- Confidence: plain-language assessment with its basis and limitations.
+- Supporting evidence: expandable excerpts with evidence IDs and interpretation labels.
+- Source links: locators that identify the cited content.
+
+For quantitative answers additionally show numerator, denominator, unknowns and calculation scope. For explanations involving cognition or product design, label reference-supported reasoning separately from user evidence.
+
+If asked for features or a final solution, explain that this discovery tool can identify problems and research gaps; it should not generate a final Google Photos feature proposal.
+
+SECTION AI — INSUFFICIENT EVIDENCE
+
+When the corpus cannot support an answer, return:
+“Insufficient evidence in the current research corpus.”
+
+Then explain the missing information briefly, retain the active filters and identify what type of collection or primary research could resolve the gap. Related examples may be offered only as related material, clearly separated from an answer to the unsupported question.
+
+Use the same approach for an unsupported part of a mixed question while answering supported parts. Do not replace missing outcomes with likely outcomes, fill missing queries with plausible text or search model memory for a convenient result.
+
+Distinguish no relevant evidence, too little evidence, contradictory evidence, unknown outcomes, inaccessible sources and an operational retrieval error. A technical failure should be reported as an error, not presented as a research finding of absence.
+
+Evidence sufficiency depends on the claim. One case can illustrate an experience; it cannot establish a recurring pattern, product-wide deficiency or population rate. The engine should communicate this difference without using a universal minimum count as proof.
+
+SECTION AJ — USER EXPERIENCE REQUIREMENTS
+
+Provide a calm, professional research experience organised around the question and the evidence. Core surfaces are Overview, Evidence Explorer, Patterns, Retrieval Journeys, Opportunities and Ask Research. Methods & Limitations is an accessible optional surface or persistent entry point.
+
+Visual analysis is a mandatory part of the final application. It must be designed to the standard of an expert senior data analyst and consulting specialist: accurate calculations, appropriate chart selection, clear communication, visible limitations and a direct link from the visual to its evidence. Populate the visuals from the same accepted corpus and versioned annotations used in the research views.
+
+Use progressive disclosure: concise summaries first, details and context on demand. Keep active filters, unit of analysis, corpus status and review status visible. Preserve filters when moving between a chart, cluster and evidence list.
+
+Visually distinguish source text, translation, model summary, analyst interpretation and hypothesis. Labels must work without colour. Avoid decorative metrics, unnecessary charts, animated AI gimmicks and dense displays of every field.
+
+Support keyboard navigation, visible focus, readable text, adequate contrast, screen-reader labels and clear form/error messages. Tables and charts need accessible text values and usable narrow-screen alternatives. Unknown and zero must look different.
+
+Empty, loading, partial-collection, unavailable-source and failed-processing states must be truthful. A fresh installation must show no collected evidence; any illustrative interface content must be explicitly labelled and excluded from research counts.
+
+The planned public deployment is a discovery-engine demonstration. Public access does not grant access to private research notes or source content without appropriate display rights. Researcher-only actions such as collection configuration, annotation changes and exports require appropriate access control.
+
+SECTION AK — OVERVIEW
+
+Show the research question, current corpus snapshot, collection scope and a concise account of coverage.
+
+Required information includes total collected corpus size, source-verified records, accepted relevant main-corpus records, control/context counts, distinct cases/conversations, source distribution, product distribution, collection health, analysis/review coverage, evidence gaps and recent ingestion.
+
+Define each count with a tooltip or short explanation. Do not use one ambiguous verified-evidence badge for both source verification and human-approved interpretation. Display the 2,000-record target honestly alongside progress and shortfall information.
+
+Collection health should identify unavailable sources, incomplete threads, unresolved imports and processing errors. Show last successful collection and analysis separately; a recent scheduled run may have failed.
+
+Lead with what the corpus can and cannot support. A large volume of raw reviews should not create the impression of a large volume of relevant independent cases. All meaningful totals and distributions should link to the relevant evidence or methods view.
+
+Include a compact visual summary of corpus coverage, reported outcomes and leading observed patterns, alongside a qualitative findings preview with supporting and challenging cases. Keep the overview focused; place full affinity maps, comparison heatmaps and detailed journeys in their relevant analysis surfaces. Every summary visual must open the corresponding detail view with the active filters preserved.
+
+SECTION AL — EVIDENCE EXPLORER
+
+Provide filters for product, source, media type, cue, cue confidence/state, retrieval outcome, failure type, relevance category, date, language, source verification, analysis confidence and human-review status. Include corpus type and case/conversation identity where appropriate.
+
+Each record must expose a short source excerpt, labelled summary, product/source, remembered and uncertain cues, search behaviour, supported journey, outcome, AI interpretation, confidence basis, review status and source locator. Expanded detail must reveal the original wording, relevant context, translations/redactions and linked messages.
+
+Use distinct labelled areas for WHAT THE USER SAID and WHAT THE AI INTERPRETED. The user area may include an exact source excerpt; the interpretation area must identify model/annotation status. Do not style model-created text as a quotation.
+
+Support sorting, full-text search and case-level grouping without changing counts unpredictably. Show missing values and explicit exclusions. Let researchers open the source and correct interpretations while leaving the source capture unchanged under applicable retention rules.
+
+Public evidence detail must follow the source's display/reuse conditions. When full text cannot be shown, provide only permitted summaries or excerpts and explain the restricted detail; do not imply a broken link is the user's fault.
+
+SECTION AM — PATTERNS
+
+Present cue patterns, cue co-occurrence, behavioural groups, breakdown groups, media differences, product differences and emerging themes.
+
+Prefer a compact table or chart when it makes a comparison easier. Show distinct-case counts, denominators, unknowns, source breadth and review status. A chart should answer a research question, not decorate the page.
+
+Each chart element or theme must open its supporting evidence with the same filters and corpus version. Provide representative, successful and challenging examples together. Separate a cluster's observed pattern from a proposed cognitive or technical explanation.
+
+Flag source-dominated groups and small comparison subsets. A theme occurring in many messages from one conversation is not a broad pattern. Researchers should be able to compare direct-statement-only results with any included implied evidence.
+
+New themes remain provisional until reviewed. Do not claim a universally valid failure taxonomy from the current corpus.
+
+Integrated dashboard visual-analysis specification
+
+The implemented dashboard must provide at least the following working analysis views when the corpus supports them:
+
+1. Quantitative distribution view for source/product/media coverage.
+2. Quantitative reported-outcome view, including unknown/unreported outcomes.
+3. Quantitative ranked cue/behaviour/breakdown view.
+4. Qualitative affinity/theme view with linked evidence and negative cases.
+5. Qualitative retrieval-journey and cue-evolution view.
+
+These are required analytical capabilities, not five charts that must be crowded onto the landing screen. Co-occurrence heatmaps, subgroup comparisons, effort distributions and temporal charts belong in expandable detail where the data justifies them. When an analysis lacks eligible data, show a specific insufficient-data state and the missing requirement; do not fabricate values or render a misleading zero chart.
+
+For each visual, define the research question, metric/category definitions, unit of analysis, numerator/denominator, filters, missing-data treatment, coding eligibility, source coverage and corpus/analysis version. Support both counts and percentages when meaningful, and recalculate the denominator after filtering. Provide a concise interpretation and limitation beside the visual. Finding-led titles must be supported; otherwise use a neutral question or descriptive title.
+
+Selection of a bar, heatmap cell, theme or journey transition must reveal the contributing cases, not an unrelated sample. Hover, focus or selection details should expose values, denominators and definitions. Selecting a multi-label theme must not imply its cases are exclusive of other themes.
+
+Use readable, consistent styling and a restrained, colourblind-accessible palette. Distinguish categories and statuses through text, icons or patterns as well as colour. Provide an equivalent data table or structured text summary, keyboard-accessible interactions and layouts suitable for narrow screens. Retain explanatory labels in export; a chart image without scope or units is incomplete.
+
+Allow selected charts/maps to be exported for research reports and presentations as readable images or vector graphics where feasible, with permitted underlying data available in an appropriate export. Include title, scope, denominator and snapshot date. Export only content allowed for the selected audience, including limits on qualitative excerpts and source data.
+
+SECTION AN — RETRIEVAL JOURNEYS
+
+Visualise observed sequences and common transitions with a supporting case count and provenance. Examples of possible sequences are need → search → poor results → new clue → reformulation → browsing → found, and need → repeated search → scrolling → account switch → abandonment. These examples are illustrative until populated with real evidence.
+
+Provide an individual-case view before aggregating a common journey. Each step should reveal the reported action, clue, source span and certainty of ordering. Gaps must remain gaps. Distinguish confirmed action from suggested advice.
+
+Aggregated paths require consistent stage definitions and a denominator of cases with sufficient sequence information. Show which cases were excluded for incomplete order and how much of the corpus the diagram covers.
+
+Cue changes should appear alongside the relevant step rather than in an unrelated panel. Compare successful and unsuccessful paths without implying that a path caused an outcome. Long or looping journeys should remain readable through focused views.
+
+Use a journey map for detailed context and a cue timeline for memory changes. An aggregated Sankey or transition diagram may be added only when enough cases report ordered transitions; display its eligible-case denominator and missing-sequence coverage. Do not convert retrospective, incomplete accounts into a funnel or invent transitions to complete the flow. Diagram links indicate reported sequence rather than a causal effect.
+
+SECTION AO — OPPORTUNITIES
+
+An opportunity is a problem worth investigating or solving, not a feature proposal.
+
+Compare candidate problems using observed recurrence, independent cases/conversations, source breadth, product breadth, frequency within the collected corpus, reported effort, severity, workaround cost, abandonment, strategic relevance and evidence confidence.
+
+Each opportunity must include a plain-language problem statement, affected task/context, supporting case counts, known-outcome coverage, reported impact, contradictory/negative cases, alternative explanations, missing information and the next validation step.
+
+Label every assessment as direct evidence, corpus-derived calculation, analyst judgement, external reference or unknown. Do not treat a rating as severity, corpus volume as population reach, or missing duration as low effort. Recurrence among collected cases does not establish how frequently an average user experiences the problem.
+
+Prioritise with visible evidence and uncertainty rather than an unexplained weighted score. If a scoring model is later chosen, disclose dimensions, weights, missing-data treatment and sensitivity. It must not manufacture precision from unknown inputs.
+
+The output should be a defensible shortlist, not a forced number of opportunities or a final investment decision. Each shortlisted hypothesis should explain what primary research could confirm or disconfirm it.
+
+Provide a comparison matrix for opportunity evidence and uncertainty. An optional scatter or bubble plot can compare two clearly defined, supported dimensions, with size representing an explicitly named count. Unknown effort or severity must not become zero, and analyst-assessed axes must be labelled as judgement. Do not imply population reach or precise business impact from corpus recurrence.
+
+SECTION AP — HUMAN REVIEW
+
+Researchers should be able to approve eligible evidence, reject false positives, correct codes, edit annotations, merge/split/rename clusters, exclude records, flag contradictions, pin important cases and create gold-standard evaluation examples.
+
+Keep separate review statuses for eligibility, extraction, journey/outcome and findings. Record reviewer, time, previous value, new value and reason. Do not call automated validation human review.
+
+Prioritise ambiguous eligibility, low-confidence extraction, contradictory sequences, important opportunity claims and an independently sampled quality-audit set. High-stakes findings require review of their cited support; a blanket approval of a cluster cannot substitute for checking its evidence.
+
+Ordinary review cannot edit raw source wording. Corrections change annotations or add a new source-capture version. Required privacy/source deletion remains an exception and must propagate to derivatives.
+
+Human-corrected examples can inform prompt changes, but held-out evaluation examples must remain separate from prompt development. Reanalysis must preserve reviewed annotations or surface proposed changes for review rather than silently undoing them.
+
+SECTION AQ — MCP INTEGRATION
+
+The only optional external publishing integration is Google Docs through MCP. Email integrations and email sharing are outside scope.
+
+Supported future actions may include creating a selected research report, appending selected findings, updating a specified research document, inserting citations/source links and publishing a selected opportunity analysis into that document.
+
+Logical integration path:
+Discovery Engine → MCP client → configured MCP_SERVER_URL → authorised Google Docs MCP server → selected Google document.
+
+MCP_SERVER_URL is configuration, not proof that a server exists. Verify available tools, authentication, destination and permissions during the later integration phase. Do not invent server endpoints or assume an installed connector can be reused by the deployed application.
+
+The researcher must be able to inspect the report and select the destination before an external write. If a write is already explicitly authorised, respect that scope. Updating an existing document must preserve unrelated content and report failures or partial writes clearly.
+
+Export only material permitted for the selected audience, with the corpus snapshot, limitations and source links. Creating a document must not change its sharing permissions or notify people unless separately requested.
+
+The engine must collect, analyse, explore, answer questions and export local research files without this integration. An MCP outage must not block research. No external document is created in this document-only step.
+
+SECTION AR — SCHEDULER
+
+Future refreshes may use GitHub Actions or another equivalent scheduler. This is an application capability specification, not a request to create a scheduled task now.
+
+A run should collect from enabled sources, create a batch, normalise, deduplicate, classify, analyse, embed new or changed eligible content and refresh derived statistics/indexes.
+
+Configure frequency, source windows, rate limits, budget, retry policy and stop conditions. Avoid continuous scraping. Incremental checkpoints and idempotent processing should prevent duplicate records and duplicate analysis after retries.
+
+Do not overlap runs that would corrupt state. Surface partial-source failures and preserve previously valid data without pretending the refresh succeeded. Keep last attempted run, last successful run and latest usable snapshot separate.
+
+Review source-permission and deletion requirements before refreshes. Retained data and derivatives must stay within applicable source terms. Researcher control must include pausing collection without losing existing permitted analysis.
+
+Scheduled collection must not trigger document publishing or sharing by default. Google Docs delivery is a separate, explicitly scoped action.
+
+SECTION AS — PRIVACY
+
+Use permitted public evidence only. Do not access a personal photo library, private account, private message, private group or research participant's device as part of this engine.
+
+Minimise retained personal identifiers. Do not unnecessarily store usernames, email addresses, phone numbers, personal account identifiers or device IDs. Source URLs may themselves expose identifiers; account for this in public display and exports.
+
+When speaker continuity is necessary, use an opaque, source-scoped pseudonym or appropriately protected keyed identifier. Do not use simple unsalted username hashes as a promise of anonymity, link identities across platforms or infer sensitive attributes.
+
+Keep task context that is necessary for interpretation without reproducing unrelated personal details. Avoid collecting attached personal images unless separately necessary and permitted; text evidence does not require a copy of the user's photo.
+
+Separate researcher-only raw/context access from the public demonstration. Apply source-specific retention, redaction, deletion and model-processing conditions. Use providers/settings that do not repurpose the research corpus for model training without an applicable basis.
+
+Record legitimate removals and refresh affected statistics, embeddings and reports. Ordinary source immutability protects analytical integrity; it must not prevent required privacy or source-policy deletion.
+
+SECTION AT — SOURCE COMPLIANCE
+
+Prohibit scraping behind login, CAPTCHA bypass, anti-bot circumvention, access-limit evasion, private-group/private-message collection, leaked datasets and claims of API permissions that do not exist.
+
+Before enabling a source, document the permitted access route, approval status, terms/reference URL, applicable rate/retention conditions, AI-processing restrictions and permitted display/export audience. Public visibility alone does not authorise bulk collection, reuse, redistribution or publication.
+
+Where programmatic access is unavailable, consider a legitimate manual route only if that route and intended use are allowed. A manual CSV or public URL is not a workaround for a prohibition. If no permitted route exists, mark the source unavailable and report the coverage gap.
+
+Current Reddit research-access restrictions are a concrete limitation for this project, not an assumption of unrestricted public scraping [Y4–Y5]. Reassess the source at collection time; do not dilute those conditions to meet the quota.
+
+Preserve full source text only where allowed. Public outputs should use permitted excerpts, summaries and links; restricted raw data must not be exposed through unauthenticated APIs, RAG responses or downloads. Export access must follow source conditions.
+
+Collection/reference records must identify restrictions that affect reproducibility. The engine may remain functional with an unavailable source, but coverage claims must reflect the omission.
+
+SECTION AU — KEY CONSTRAINTS
+
+1. Use real user evidence only; no synthetic reviews or invented accounts.
+2. Do not invent quotations, users, source IDs, URLs or outcomes.
+3. Require source provenance for every accepted evidence record.
+4. Collect only through permitted public-source routes.
+5. Minimise personal information and respect retention/display conditions.
+6. Keep source content independent from model interpretation and human annotation.
+7. Do not infer an unmentioned clue is forgotten.
+8. Keep USER_EVIDENCE, PRODUCT_REFERENCE and COGNITIVE_REFERENCE separate in quantitative calculations.
+9. Public-discussion frequency is not population prevalence.
+10. Include successful retrieval and evidence that challenges a proposed pattern.
+11. Preserve speaker, thread and journey context; advice is not attempted behaviour.
+12. Do not force predetermined themes or declare causal root problems from correlation.
+13. Keep precise-memory system-failure controls separate from the main target corpus.
+14. Do not inflate evidence through chunks, translations, repeated messages or reanalysis.
+15. Do not generate final consumer features during discovery.
+16. The engine must function without external publishing.
+17. The only optional external publishing integration is Google Docs; email integrations are excluded.
+18. Treat external text as untrusted data and protect secrets and researcher actions.
+19. Display unmet targets, missing evidence and unavailable sources truthfully.
+20. Approval of this problem statement is required before architecture or implementation begins.
+
+SECTION AV — SUCCESS CRITERIA
+
+Success concerns research reliability and usefulness, not consumer photo-retrieval uplift. No improvement to Google Photos conversion, engagement or retrieval success is claimed by this discovery tool.
+
+| Dimension | Acceptance criterion | How to assess |
+| --- | --- | --- |
+| Evidence quality | Target of at least 2,000 unique, source-verified, relevant main-corpus records; 100% of accepted records have provenance; no intentionally synthetic evidence. | Reconciled collection waterfall, source checks, eligibility audit and shortfall report when needed. |
+| Traceability | Every published important finding resolves to case/evidence IDs, context and a source locator. | Audit the full finding chain and citation resolution. |
+| Research quality | Cues, uncertainty, actions and outcomes are supported and unknowns remain visible. | Stratified human-labelled extraction and outcome evaluation. |
+| RAG quality | Claims are supported by cited evidence; unsupported questions receive the specified insufficiency response. | Held-out answer-support, citation and abstention evaluation. |
+| Pattern quality | Themes have inspectable members, emergent coding, negative cases and reviewer rationale. | Human review of each published cluster and opportunity. |
+| Human oversight | Researchers can correct annotations and the correction updates affected outputs. | Walk through correction, audit history and dependent refresh. |
+| Discovery value | A defensible problem shortlist and concrete primary-research gaps emerge. | PM/UX research review of support, alternatives and next-study questions. |
+| Usability | A researcher can inspect evidence, explain a finding's basis and identify a limitation without assistance. | Task-based review with representative researchers. |
+| Visual analysis | The final dashboard includes usable quantitative and qualitative visual views, driven by real eligible data with visible scope and drill-down. | Reconcile visual values with filtered case lists and exported aggregates; review qualitative maps against source-supported annotations. |
+
+Proposed evaluation targets for the later Evals.md, not measured results:
+
+- Create at least 150 real, permitted, stratified gold-standard examples, including relevant cases, controls, exclusions, ambiguous cases and successes. Independently double-code at least 30 examples and adjudicate disagreements.
+- Evaluate on held-out examples not used to tune prompts. Initial targets: relevance precision at least 90%, relevance recall at least 80%, and at least 90% correct support/status assignment for extracted cues, actions and outcomes. Publish denominators and slice-level errors.
+- Test at least 50 held-out research questions covering supported qualitative questions, structured counts, contradictions and insufficient-evidence cases. Target at least 95% supported factual answer claims and at least 90% correct insufficiency handling; report errors rather than hiding them.
+- Require 100% resolvable citations and no fabricated evidence, quotes or URLs. Any known unsupported claim in a published finding must be corrected regardless of an aggregate target.
+- Review the shortlisted opportunities and their cited support before publication.
+- Verify every published chart's category definitions, numerator, denominator, aggregation and missing-data treatment against its underlying eligible records. Filtering, counts/share controls and exports must agree with the same corpus snapshot.
+- Check that qualitative theme memberships, excerpts, journey steps and cue changes resolve to supporting evidence, with hypotheses and negative cases clearly labelled.
+- Confirm readable labels, accessible alternatives, keyboard interaction and truthful empty/insufficient-data states for the visual-analysis views.
+
+These are project acceptance targets, not scientific benchmarks or guarantees. Refine evaluation design after source and corpus feasibility are established; record any change transparently. Meeting a classifier target does not establish population validity. Volume shortfall means that criterion remains unmet even if the other capabilities work.
+
+SECTION AW — EXPECTED DELIVERABLES
+
+Only docs/ProblemStatement_Finding_Memory.txt is produced at this step. The paths below describe future deliverables, not files that have already been created.
+
+After explicit approval of this document, prepare the remaining documentation in the order listed below. Once Decisions.md and the preceding documents are complete, obtain explicit human approval before phase-by-phase implementation. Do not skip these gates or treat approval of the problem statement as approval of deployment.
+
+Documentation, in the intended approval sequence:
+
+- docs/ProblemStatement_Finding_Memory.txt — approved research purpose, scope, requirements and acceptance criteria.
+- /docs/Architecture.md — later system responsibilities and technical boundaries.
+- /docs/DataSources.md — verified sources, access/display conditions and coverage.
+- /docs/ResearchSchema.md — later formal raw/analysis/case information model.
+- /docs/ImplementationPlan.md — phase boundaries and validation checkpoints.
+- /docs/Conventions.md — identifiers, labels, versioning and contribution rules.
+- /docs/EdgeCases.md — ambiguity, missing context, deletions and recovery behaviour.
+- /docs/Evals.md — gold-set design, held-out checks and observed results.
+- /docs/Decisions.md — recorded decisions, assumptions and changes.
+
+Data deliverables:
+
+- verified_user_evidence.csv and verified_user_evidence.jsonl — eligible evidence and analysis with provenance and explicit record/case identities, subject to source export permissions.
+- source_registry.csv — source route, status, conditions and configuration metadata without secrets.
+- collection_batches.csv — collection/processing accounting and failures.
+- gold_standard_evidence.csv — human-adjudicated, permitted evaluation records and labels.
+
+Application deliverables: Overview, Evidence Explorer, Patterns, Retrieval Journeys, Opportunities and Ask Research, with accessible Methods & Limitations and appropriate public/researcher access boundaries.
+
+Visual-analysis deliverables: working quantitative charts and qualitative maps/cards/journeys within those surfaces; documented metric and category definitions; supporting-case drill-down; accessible table/text equivalents; and permitted chart/map and underlying-data export for research communication. Screenshots of mock charts alone do not satisfy this requirement.
+
+Infrastructure capabilities: structured evidence storage, vector index, RAG service, collection pipeline, analysis pipeline, human review and optional Google Docs MCP export.
+
+Research outputs: a traceable discovery report, problem-opportunity shortlist, contradictory/negative cases, limitations and primary-research gaps. The eventual deployed demonstration must use real permitted evidence and truthful empty/partial states. Publication conditions and source restrictions must determine what is actually exposed.
+
+SECTION AX — DEFINITION OF DONE
+
+A researcher should eventually be able to:
+
+1. Open the application and understand its discovery purpose.
+2. Read the central research question and scope.
+3. Inspect the corpus and distinguish records from cases.
+4. Understand source coverage, inaccessible sources and collection limits.
+5. Browse genuine, eligible evidence.
+6. Filter evidence without losing the analysis scope.
+7. Open an identifiable original source where it remains available.
+8. Inspect supported remembered and uncertain cues.
+9. Explore complete or partial retrieval journeys.
+10. Explore recurring patterns and their member cases.
+11. Compare products with visible coverage and feature context.
+12. Compare media types with correct denominators.
+13. Ask bounded research questions.
+14. Receive evidence-backed answers or an insufficiency statement.
+15. Inspect citations and their supporting source spans.
+16. Inspect contradictory evidence, successes and negative cases.
+17. Identify gaps requiring primary research.
+18. Compare problem opportunities with uncertainty preserved.
+19. Export evidence/report material within permitted access and reuse conditions.
+20. Optionally publish a selected report to an authorised Google Docs destination.
+
+Additionally, the researcher must be able to correct an interpretation and see the change reflected in dependent views. Documented evaluations must be available, and unmet criteria must be visible. A live link, high raw-record count or polished interface alone does not establish completion.
+
+Visual-analysis completion additionally requires a researcher to inspect both quantitative and qualitative views, understand their scope and unknowns, filter them consistently, open the supporting cases and export selected visuals with context. The final dashboard must contain the implemented visual-analysis capabilities, with truthful insufficient-data states where evidence does not support a particular analysis.
+
+At no point should a researcher have to trust an unexplained AI conclusion. Consumer retrieval improvement and final feature validation belong to later phases.
+
+SECTION AY — WHAT THE PRODUCT IS NOT
+
+Finding Memory is not an Ask Photos clone, a Google Photos feature prototype, a sentiment dashboard, a review summariser, a generic chatbot, a feature-request summariser, a solution generator, a synthetic user-research generator or a generic competitor-analysis dashboard.
+
+The engine studies reported retrieval behaviour and structures evidence for discovery. It does not connect to private photo libraries, retrieve a consumer's actual photo, diagnose memory, prove a causal explanation from public discussion or validate a preferred feature concept.
+
+Comparators and cognitive references support research interpretation. They do not turn the application into a comprehensive feature audit or substitute for direct user observation.
+
+Current-step boundary: complete this docs/ProblemStatement_Finding_Memory.txt and stop. Architecture, source implementation, formal schemas, APIs, agents, frontend screens, scheduled jobs, external writes and deployment require the later approved workflow. No final user-facing Google Photos solution is proposed here.
+
+SECTION AZ — FINAL SUMMARY
+
+Finding Memory is a discovery engine for understanding how people recover visual items when they start with incomplete or uncertain memory. It brings together permitted public accounts, product documentation and cognitive research while preserving their different evidential roles. Researchers can inspect clues, actions, evolving journeys, outcomes and recurring breakdowns, then trace every important finding back to its source. The result is a defensible set of problem hypotheses and research gaps that guides primary research before a solution is designed.
