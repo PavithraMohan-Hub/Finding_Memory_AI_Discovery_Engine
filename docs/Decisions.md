@@ -531,3 +531,33 @@ Do not implement the `evidence_embeddings` table or enable `pgvector` in the Pha
 - Requires a separate migration in Phase 7 to create the table and vector indexes.
 
 **Reversal condition:** If basic semantic deduplication is required during initial data ingestion (currently planned for Phase 7).
+
+---
+
+### D025: Decouple Relevance Priority from Case Type and Enable Analysis Run Coexistence
+
+| Aspect | Details |
+|---|---|
+| Date | 2026-10-06 |
+| Phase | Planning (Database Architecture Audit) |
+| Status | ACCEPTED |
+| Decided by | Semantic & Data-Model Audit |
+
+**Context:**
+Phase 1 Migration 004 defines `evidence_analysis`. Two semantic design refinements were identified:
+1. `retrieval_relevance` previously conflated two distinct dimensions: priority/degree (`HIGH`, `MEDIUM`, `LOW`, `IRRELEVANT`) and retrieval case categorization (`MAIN_INCOMPLETE_MEMORY`, `PRECISE_MEMORY_SYSTEM_FAILURE`, `CONTEXT_ONLY`, `EXCLUDED`, `NEEDS_REVIEW`).
+2. A rigid `UNIQUE (evidence_id, analysis_version)` constraint prevented legitimate re-analysis of the same evidence record across different models or prompt iterations (e.g. comparing Prompt v1 vs Prompt v2 or Model A vs Model B on the same schema version).
+
+**Decision:**
+1. Decouple into two orthogonal columns: `retrieval_relevance` (Priority: `HIGH`, `MEDIUM`, `LOW`, `IRRELEVANT`) and `relevance_category` (Case Classification: `MAIN_INCOMPLETE_MEMORY`, `PRECISE_MEMORY_SYSTEM_FAILURE`, `CONTEXT_ONLY`, `EXCLUDED`, `NEEDS_REVIEW`).
+2. Remove the rigid `UNIQUE (evidence_id, analysis_version)` constraint, allowing each historical run to exist independently with its own `analysis_id` and tracking current head via `is_latest BOOLEAN`.
+
+**Rationale:**
+- Allows querying "How relevant is this record?" independently from "What kind of retrieval case is this?".
+- Allows historical prompt evaluation, A/B model benchmarking, and auditable pipeline evolution without data loss or unique constraint violations.
+
+**Trade-offs:**
+- Two separate columns instead of one combined field.
+- Application queries filtering for current active analysis should include `is_latest = TRUE`.
+
+**Reversal condition:** If strict 1-to-1 analysis versioning is reinstated and prompt/model benchmarking is moved to an offline staging database.

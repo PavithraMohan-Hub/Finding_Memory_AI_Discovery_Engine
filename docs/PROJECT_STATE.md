@@ -64,7 +64,7 @@
 |---|---|---|
 | PLANNING | Documentation | APPROVED |
 | 0 | Project Foundation | VERIFIED |
-| 1 | Database + Research Schema | IN PROGRESS (CLI linked; Migrations 001, 002 & 003 approved; evidence_analysis pending) |
+| 1 | Database + Research Schema | IN PROGRESS (CLI linked; Migrations 001, 002, 003 & 004 approved; clusters & annotations pending) |
 | 2 | First Real Evidence Ingestion | NOT STARTED |
 | 3 | Cleaning + Normalization + Dedup | NOT STARTED |
 | 4 | Relevance Classifier | NOT STARTED |
@@ -101,7 +101,7 @@
 | Service | Status |
 |---|---|
 | GitHub | CONFIGURED (origin/main connected) |
-| Supabase | CONFIGURED (CLI linked to hosted dev project; credentials verified safe; Migrations 001, 002 & 003 approved) |
+| Supabase | CONFIGURED (CLI linked to hosted dev project; credentials verified safe; Migrations 001, 002, 003 & 004 approved) |
 | Vercel | NOT CONFIGURED |
 | Google AI Studio / Gemini API | NOT CONFIGURED |
 | YouTube Data API | NOT CONFIGURED (Phase 12) |

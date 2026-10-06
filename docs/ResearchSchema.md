@@ -225,11 +225,14 @@ Individual messages within a thread, ordered by sequence.
 
 | Column | Type | Required | Description |
 |---|---|---|---|
-| retrieval_relevance | TEXT (CHECK) | NO | MAIN_INCOMPLETE_MEMORY / PRECISE_MEMORY_SYSTEM_FAILURE / CONTEXT_ONLY / EXCLUDED / NEEDS_REVIEW |
+| retrieval_relevance | TEXT (CHECK) | NO | Relevance tier: HIGH / MEDIUM / LOW / IRRELEVANT |
+| relevance_category | TEXT (CHECK) | NO | Retrieval case type: MAIN_INCOMPLETE_MEMORY / PRECISE_MEMORY_SYSTEM_FAILURE / CONTEXT_ONLY / EXCLUDED / NEEDS_REVIEW |
+| relevance_score | NUMERIC | NO | Quantitative relevance score where evaluated |
 | relevance_rationale | TEXT | NO | Explanation of relevance decision |
 | relevance_source_spans | JSONB | NO | Array of text spans supporting relevance decision |
 | target_media_type | TEXT[] | NO | photo / video / screenshot / document / other |
 | what_user_wanted_to_find | TEXT | NO | Brief description (AI-interpreted; labelled as AI_INTERPRETATION) |
+| user_believes_item_exists | BOOLEAN | NO | Whether source indicates user belief that item exists |
 
 ### 8.3 Memory Cues
 
@@ -499,6 +502,9 @@ Research report generation metadata. Reports link findings to the corpus snapsho
 USER_EVIDENCE | PRODUCT_REFERENCE | COGNITIVE_REFERENCE
 
 ### retrieval_relevance
+HIGH | MEDIUM | LOW | IRRELEVANT
+
+### relevance_category
 MAIN_INCOMPLETE_MEMORY | PRECISE_MEMORY_SYSTEM_FAILURE | CONTEXT_ONLY | EXCLUDED | NEEDS_REVIEW
 
 ### cue_state
