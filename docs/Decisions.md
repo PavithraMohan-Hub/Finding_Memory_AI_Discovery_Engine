@@ -477,3 +477,57 @@ Evidence without a source URL cannot be traced, verified, or included in citatio
 - Researcher must ensure manual imports include source URLs (adds preparation burden)
 
 **Reversal condition:** Not applicable — core research validity requirement.
+
+---
+
+### D023: Use TEXT + CHECK Constraints instead of Native PostgreSQL ENUMs
+
+| Aspect | Details |
+|---|---|
+| Date | 2026-10-06 |
+| Phase | Planning (Architecture Audit) |
+| Status | ACCEPTED |
+| Decided by | Database Architecture Review |
+
+**Context:**  
+Research taxonomies (e.g., `retrieval_relevance`, `message_role`, `problem_codes`) will evolve as analysis uncovers new patterns. Native PostgreSQL ENUMs are rigid and difficult to modify or remove values from in a live database without complex migrations.
+
+**Decision:** 
+Use standard `TEXT` columns enforced by `CHECK` constraints (e.g., `CHECK (message_role IN ('ORIGINAL_POST', 'OP_FOLLOWUP', ...))`) instead of native `ENUM` types.
+
+**Rationale:**
+- Adding/removing values to a `CHECK` constraint is a simple `ALTER TABLE` statement (drop and recreate the constraint).
+- Prevents database state lock-in when qualitative codebooks evolve.
+- Maintains data integrity while maximizing flexibility for the research process.
+
+**Trade-offs:**
+- Slightly larger storage footprint than native ENUMs (negligible for expected data scale).
+
+**Reversal condition:** If strict, unchangeable type safety becomes necessary and taxonomy drift ceases completely.
+
+---
+
+### D024: Defer Vector Embeddings Implementation to Phase 7
+
+| Aspect | Details |
+|---|---|
+| Date | 2026-10-06 |
+| Phase | Planning (Architecture Audit) |
+| Status | ACCEPTED |
+| Decided by | AI System Architecture Review |
+
+**Context:**  
+Phase 1 focuses exclusively on the foundational relational schema and secure access patterns. Vector similarity search (`pgvector`) requires selecting an embedding model, defining dimensions, and setting up vector indexes.
+
+**Decision:** 
+Do not implement the `evidence_embeddings` table or enable `pgvector` in the Phase 1 schema migration. Defer all embedding-related architecture and implementation to Phase 7 (Embeddings & Semantic Search).
+
+**Rationale:**
+- Prevents premature optimization and coupling to a specific embedding dimension.
+- Keeps Phase 1 scoped tightly to core data ingestion and integrity constraints.
+- Embedding strategy depends on real data characteristics discovered in Phases 2-5.
+
+**Trade-offs:**
+- Requires a separate migration in Phase 7 to create the table and vector indexes.
+
+**Reversal condition:** If basic semantic deduplication is required during initial data ingestion (currently planned for Phase 7).

@@ -16,7 +16,9 @@
 5. **Unknowns stay visible.** Missing values are explicit NULL or a named "unknown" enumeration value — never fabricated.
 6. **Deduplication is tracked, not destructive.** Duplicate records are linked by duplicate_group_id; the canonical record is retained.
 7. **Human review is auditable.** Every annotation change records reviewer, previous value, new value, reason, and timestamp.
-8. **This is an information model, not a migration file.** Column definitions are logical requirements. The database migration in Phase 1 may refine data types, indexes, and constraint syntax.
+8. **This is an information model, not a migration file.** Column definitions are logical requirements.
+9. **UUID Strategy:** Use `gen_random_uuid()` for all UUID primary keys. Do not use legacy UUID extensions (e.g., uuid-ossp).
+10. **Controlled Values:** Research taxonomies use evolvable `TEXT` columns with `CHECK` constraints (denoted as `TEXT (CHECK)`) rather than rigid native PostgreSQL ENUMs.
 
 ---
 
@@ -63,9 +65,10 @@ Tracks every candidate data source before and during active collection.
 |---|---|---|---|
 | source_id | UUID | YES | Stable system identifier |
 | source_platform | TEXT | YES | Platform label (google_play_store, apple_app_store, reddit, youtube, etc.) |
-| corpus_type | TEXT ENUM | YES | USER_EVIDENCE / PRODUCT_REFERENCE / COGNITIVE_REFERENCE |
+| corpus_type | TEXT (CHECK) | YES | USER_EVIDENCE / PRODUCT_REFERENCE / COGNITIVE_REFERENCE |
 | display_name | TEXT | YES | Human-readable name |
-| access_status | TEXT ENUM | YES | ENABLED / CONDITIONAL / UNAVAILABLE / MANUAL_ONLY / NOT_VERIFIED |
+| priority | INTEGER | NO | Collection priority relative to other sources |
+| access_status | TEXT (CHECK) | YES | ENABLED / CONDITIONAL / UNAVAILABLE / MANUAL_ONLY / NOT_VERIFIED |
 | permitted_route | TEXT | YES | Description of the confirmed or proposed collection method |
 | terms_reference_url | TEXT | NO | URL of applicable terms or policy |
 | approval_status | TEXT | NO | Description of research-access approval state |
@@ -89,11 +92,11 @@ One record per ingestion run. Links to raw_evidence records via collection_batch
 |---|---|---|---|
 | batch_id | UUID | YES | Stable batch identifier |
 | source_id | UUID | YES | FK → source_registry.source_id |
-| corpus_type | TEXT ENUM | YES | Corpus this batch contributes to |
+| corpus_type | TEXT (CHECK) | YES | Corpus this batch contributes to |
 | collection_method | TEXT | YES | Connector class / method used |
 | started_at | TIMESTAMPTZ | YES | Run start time |
 | completed_at | TIMESTAMPTZ | NO | Run completion time (NULL if running or failed) |
-| status | TEXT ENUM | YES | PENDING / RUNNING / PARTIAL / FAILED / COMPLETE |
+| status | TEXT (CHECK) | YES | PENDING / RUNNING / PARTIAL / FAILED / COMPLETE |
 | records_fetched | INTEGER | NO | Total records retrieved from source |
 | records_stored | INTEGER | NO | Records written to raw_evidence |
 | records_duplicate | INTEGER | NO | Records identified as duplicates |
@@ -114,7 +117,7 @@ One record per ingestion run. Links to raw_evidence records via collection_batch
 | Column | Type | Required | Description |
 |---|---|---|---|
 | evidence_id | UUID | YES | Stable system identifier |
-| corpus_type | TEXT ENUM | YES | USER_EVIDENCE / PRODUCT_REFERENCE / COGNITIVE_REFERENCE |
+| corpus_type | TEXT (CHECK) | YES | USER_EVIDENCE / PRODUCT_REFERENCE / COGNITIVE_REFERENCE |
 | source_platform | TEXT | YES | Platform label |
 | source_type | TEXT | YES | review / community_post / youtube_comment / reddit_post / reddit_comment / manual_import / academic / web_page / etc. |
 | product_name | TEXT | NO | Named product (Google Photos, Apple Photos, etc.) |
@@ -136,11 +139,12 @@ One record per ingestion run. Links to raw_evidence records via collection_batch
 | collected_at | TIMESTAMPTZ | YES | When this record was collected |
 | collection_method | TEXT | YES | Connector class used |
 | collection_batch_id | UUID | YES | FK → collection_batches.batch_id |
-| verification_status | TEXT ENUM | YES | UNVERIFIED / SOURCE_VERIFIED / HUMAN_REVIEWED |
+| verification_status | TEXT (CHECK) | YES | UNVERIFIED / SOURCE_VERIFIED / HUMAN_REVIEWED |
 | source_access_notes | TEXT | NO | Conditions on display, reuse, or AI processing |
 | content_fingerprint | TEXT | NO | Hash of original_text for deduplication |
 | duplicate_group_id | UUID | NO | Links duplicate records; NULL if no known duplicate |
 | is_canonical | BOOLEAN | NO | TRUE if this is the retained record in a duplicate group |
+| duplicate_reason | TEXT | NO | Rationale for merging (e.g., exact hash, url match) |
 | withdrawn | BOOLEAN | NO | TRUE if source deletion or privacy withdrawal required |
 | withdrawn_at | TIMESTAMPTZ | NO | When withdrawal was applied |
 | withdrawal_reason | TEXT | NO | Required privacy/source deletion reason |
@@ -166,7 +170,7 @@ Groups related messages from community discussions, help forums, and comment thr
 | missing_coverage_note | TEXT | NO | Description of what is missing or truncated |
 | earliest_message_at | TIMESTAMPTZ | NO | Timestamp of earliest captured message |
 | latest_message_at | TIMESTAMPTZ | NO | Timestamp of latest captured message |
-| corpus_type | TEXT ENUM | YES | Which corpus this thread contributes to |
+| corpus_type | TEXT (CHECK) | YES | Which corpus this thread contributes to |
 | collection_batch_id | UUID | NO | FK → collection_batches.batch_id |
 | created_at | TIMESTAMPTZ | YES | DB insert timestamp |
 
@@ -183,8 +187,9 @@ Individual messages within a thread, ordered by sequence.
 | evidence_id | UUID | NO | FK → raw_evidence.evidence_id (if stored as raw evidence) |
 | sequence_number | INTEGER | YES | Position in thread (1 = original post) |
 | parent_message_id | UUID | NO | Reply-to relationship |
-| speaker_type | TEXT ENUM | NO | OP / RESPONDER / MODERATOR / DEVELOPER / UNKNOWN |
+| speaker_type | TEXT (CHECK) | NO | OP / RESPONDER / MODERATOR / DEVELOPER / UNKNOWN |
 | speaker_label | TEXT | NO | Opaque pseudonym scoped to this thread (e.g., "thread_user_A") |
+| message_role | TEXT (CHECK) | NO | ORIGINAL_POST / OP_FOLLOWUP / OTHER_USER_COMMENT / SUGGESTED_WORKAROUND / OUTCOME_UPDATE / REVIEW |
 | message_text | TEXT | NO | Message content (may be NULL if message is deleted/unavailable) |
 | is_deleted | BOOLEAN | NO | TRUE if message was deleted or unavailable at collection time |
 | published_at | TIMESTAMPTZ | NO | Message timestamp |
@@ -211,8 +216,8 @@ Individual messages within a thread, ordered by sequence.
 | model_name | TEXT | YES | AI model used for this analysis |
 | analysis_prompt_version | TEXT | YES | Prompt template version used |
 | analysed_at | TIMESTAMPTZ | YES | When analysis was generated |
-| processing_status | TEXT ENUM | YES | PENDING / RUNNING / COMPLETE / FAILED / REJECTED_BY_HUMAN |
-| human_review_status | TEXT ENUM | NO | UNREVIEWED / APPROVED / REJECTED / CORRECTED |
+| processing_status | TEXT (CHECK) | YES | PENDING / RUNNING / COMPLETE / FAILED / REJECTED_BY_HUMAN |
+| human_review_status | TEXT (CHECK) | NO | UNREVIEWED / APPROVED / REJECTED / CORRECTED |
 | reviewed_by | TEXT | NO | Reviewer identifier |
 | reviewed_at | TIMESTAMPTZ | NO | Review timestamp |
 
@@ -220,7 +225,7 @@ Individual messages within a thread, ordered by sequence.
 
 | Column | Type | Required | Description |
 |---|---|---|---|
-| retrieval_relevance | TEXT ENUM | NO | MAIN_INCOMPLETE_MEMORY / PRECISE_MEMORY_SYSTEM_FAILURE / CONTEXT_ONLY / EXCLUDED / NEEDS_REVIEW |
+| retrieval_relevance | TEXT (CHECK) | NO | MAIN_INCOMPLETE_MEMORY / PRECISE_MEMORY_SYSTEM_FAILURE / CONTEXT_ONLY / EXCLUDED / NEEDS_REVIEW |
 | relevance_rationale | TEXT | NO | Explanation of relevance decision |
 | relevance_source_spans | JSONB | NO | Array of text spans supporting relevance decision |
 | target_media_type | TEXT[] | NO | photo / video / screenshot / document / other |
@@ -261,11 +266,11 @@ Individual messages within a thread, ordered by sequence.
 | Column | Type | Required | Description |
 |---|---|---|---|
 | initial_query | TEXT | NO | Reported actual query text; NULL if "not reported" |
-| initial_query_label | TEXT ENUM | NO | DIRECT_STATEMENT / NOT_REPORTED / AI_INTERPRETATION |
+| initial_query_label | TEXT (CHECK) | NO | DIRECT_STATEMENT / NOT_REPORTED / AI_INTERPRETATION |
 | search_strategy | TEXT | NO | Described search approach |
 | subsequent_actions | JSONB | NO | Array of action objects (see below) |
 | workaround | TEXT | NO | Confirmed attempted workaround (requires OP confirmation) |
-| workaround_label | TEXT ENUM | NO | DIRECT_STATEMENT / STRONGLY_IMPLIED_BEHAVIOUR |
+| workaround_label | TEXT (CHECK) | NO | DIRECT_STATEMENT / STRONGLY_IMPLIED_BEHAVIOUR |
 
 **Action Object:**
 
@@ -290,8 +295,8 @@ Individual messages within a thread, ordered by sequence.
 | newly_recalled_cues | UUID[] | NO | Cue IDs that emerged later |
 | cue_evolution_sequence | JSONB | NO | Ordered cue changes with source span references |
 | new_cue_trigger | TEXT | NO | Reported trigger for a newly recalled or revised cue |
-| did_recognition_trigger_recall | TEXT ENUM | NO | YES / NO / UNKNOWN |
-| recognition_trigger_evidence_label | TEXT ENUM | NO | DIRECT_STATEMENT / STRONGLY_IMPLIED_BEHAVIOUR / AI_INTERPRETATION |
+| did_recognition_trigger_recall | TEXT (CHECK) | NO | YES / NO / UNKNOWN |
+| recognition_trigger_evidence_label | TEXT (CHECK) | NO | DIRECT_STATEMENT / STRONGLY_IMPLIED_BEHAVIOUR / AI_INTERPRETATION |
 | external_cue_trigger | TEXT | NO | Trigger outside current search results (if reported) |
 
 ### 8.6 Retrieval Journey
@@ -299,9 +304,9 @@ Individual messages within a thread, ordered by sequence.
 | Column | Type | Required | Description |
 |---|---|---|---|
 | journey_steps | JSONB | NO | Array of journey step objects (action + cue + ordering certainty) |
-| journey_completeness | TEXT ENUM | NO | COMPLETE / PARTIAL / SINGLE_STEP / UNKNOWN |
-| retrieval_outcome | TEXT ENUM | NO | FOUND / PARTIAL / FAILED / ABANDONED / NOT_REPORTED / UNCLEAR |
-| outcome_label | TEXT ENUM | NO | DIRECT_STATEMENT / STRONGLY_IMPLIED_BEHAVIOUR / AI_INTERPRETATION |
+| journey_completeness | TEXT (CHECK) | NO | COMPLETE / PARTIAL / SINGLE_STEP / UNKNOWN |
+| retrieval_outcome | TEXT (CHECK) | NO | FOUND / PARTIAL / FAILED / ABANDONED / NOT_REPORTED / UNCLEAR |
+| outcome_label | TEXT (CHECK) | NO | DIRECT_STATEMENT / STRONGLY_IMPLIED_BEHAVIOUR / AI_INTERPRETATION |
 | outcome_notes | TEXT | NO | Evidence basis for outcome classification |
 
 **Outcome rules:**
@@ -317,7 +322,7 @@ Individual messages within a thread, ordered by sequence.
 | problem_codes | TEXT[] | NO | Applied taxonomy codes (versioned codebook) |
 | problem_code_version | TEXT | NO | Codebook version used |
 | root_cause_hypothesis | TEXT | NO | Possible explanation requiring additional validation |
-| root_cause_evidence_label | TEXT ENUM | NO | AI_INTERPRETATION / RESEARCH_HYPOTHESIS |
+| root_cause_evidence_label | TEXT (CHECK) | NO | AI_INTERPRETATION / RESEARCH_HYPOTHESIS |
 
 **Taxonomy starter codes (provisional):** memory_limitation, query_articulation_difficulty, visual_to_verbal_gap, query_understanding_failure, metadata_mismatch, indexing_tagging_failure, ocr_failure, person_recognition_gap, ranking_failure, incomplete_result_set, similar_results_overload, date_uncertainty, location_uncertainty, source_account_uncertainty, cross_platform_fragmentation, browsing_navigation_overload, combined, unknown.
 
@@ -330,7 +335,7 @@ Codes are emergent; researchers may add or revise. Codebook changes must be vers
 | effort_signal | TEXT | NO | Qualitative description of reported effort (adjectives, etc.) |
 | effort_numeric | NUMERIC | NO | Duration in minutes or attempt count only if explicitly reported |
 | severity_signal | TEXT | NO | Qualitative severity expression |
-| effort_label | TEXT ENUM | NO | DIRECT_STATEMENT / AI_INTERPRETATION |
+| effort_label | TEXT (CHECK) | NO | DIRECT_STATEMENT / AI_INTERPRETATION |
 
 **Rules:** Exact minutes or counts entered only when explicitly supported. Negative sentiment and low ratings do not automatically indicate severe retrieval harm.
 
@@ -338,16 +343,16 @@ Codes are emergent; researchers may add or revise. Codebook changes must be vers
 
 | Column | Type | Required | Description |
 |---|---|---|---|
-| confidence | TEXT ENUM | NO | HIGH / MEDIUM / LOW (plain labels, not numeric probabilities) |
+| confidence | TEXT (CHECK) | NO | HIGH / MEDIUM / LOW (plain labels, not numeric probabilities) |
 | confidence_basis | TEXT | NO | Explanation of confidence assessment |
 | alternative_interpretations | TEXT | NO | Other plausible readings of the evidence |
 | extraction_rationale | TEXT | NO | Why this analysis concluded what it did |
 
 ---
 
-## 9. evidence_embeddings
+## 9. evidence_embeddings (DEFERRED TO PHASE 7)
 
-Vector representations. Each record links to either a raw_evidence record or a specific chunk of an evidence_analysis record.
+Vector representations. Each record links to either a raw_evidence record or a specific chunk of an evidence_analysis record. Implementation and pgvector extension are deferred to Phase 7 when an embedding model is selected.
 
 | Column | Type | Required | Description |
 |---|---|---|---|
@@ -356,10 +361,10 @@ Vector representations. Each record links to either a raw_evidence record or a s
 | analysis_id | UUID | NO | FK → evidence_analysis.analysis_id (if embedding is of analysis content) |
 | chunk_index | INTEGER | NO | Chunk number if evidence is split into multiple embeddings |
 | chunk_text | TEXT | NO | The text that was embedded |
-| embedding_vector | vector(N) | YES | pgvector vector (dimension depends on chosen embedding model) |
+| embedding_vector | vector | YES | pgvector vector (dimension to be set when model is chosen) |
 | embedding_model | TEXT | YES | Model name and version |
 | embedding_version | TEXT | YES | Pipeline embedding version |
-| corpus_type | TEXT ENUM | YES | Corpus of the source record |
+| corpus_type | TEXT (CHECK) | YES | Corpus of the source record |
 | created_at | TIMESTAMPTZ | YES | When embedding was generated |
 
 **Rules:**
@@ -379,13 +384,13 @@ Semantic and structured groupings of evidence. Versioned; researcher-editable.
 | cluster_label | TEXT | YES | Human-readable descriptive label |
 | cluster_definition | TEXT | NO | Inclusion boundary and what the cluster represents |
 | exclusion_boundary | TEXT | NO | What this cluster does not include |
-| cluster_type | TEXT ENUM | NO | SEMANTIC / STRUCTURED / HYBRID |
+| cluster_type | TEXT (CHECK) | NO | SEMANTIC / STRUCTURED / HYBRID |
 | cluster_version | TEXT | YES | Version of the cluster (changes when membership or definition changes) |
 | codebook_version | TEXT | NO | Problem-coding codebook version if applicable |
 | member_count | INTEGER | NO | Computed distinct evidence count |
 | source_breadth | INTEGER | NO | Count of distinct source platforms represented |
 | product_breadth | INTEGER | NO | Count of distinct products represented |
-| review_status | TEXT ENUM | NO | PROVISIONAL / REVIEWED / APPROVED / DEPRECATED |
+| review_status | TEXT (CHECK) | NO | PROVISIONAL / REVIEWED / APPROVED / DEPRECATED |
 | reviewed_by | TEXT | NO | Reviewer identifier |
 | reviewed_at | TIMESTAMPTZ | NO | Review timestamp |
 | notes | TEXT | NO | Analyst notes |
@@ -408,7 +413,7 @@ Many-to-many relationship between research_clusters and raw_evidence.
 |---|---|---|---|
 | cluster_id | UUID | YES | FK → research_clusters.cluster_id |
 | evidence_id | UUID | YES | FK → raw_evidence.evidence_id |
-| membership_type | TEXT ENUM | NO | CORE / PERIPHERAL / OUTLIER |
+| membership_type | TEXT (CHECK) | NO | CORE / PERIPHERAL / OUTLIER |
 | membership_basis | TEXT | NO | Why this record was included (semantic similarity, structured code, manual) |
 | assigned_at | TIMESTAMPTZ | YES | When membership was assigned |
 | assigned_by | TEXT | NO | Process or reviewer identifier |
@@ -425,7 +430,7 @@ Full audit trail for all researcher actions. Source wording in raw_evidence must
 | evidence_id | UUID | YES | FK → raw_evidence.evidence_id |
 | analysis_id | UUID | NO | FK → evidence_analysis.analysis_id (if annotating AI analysis) |
 | cluster_id | UUID | NO | FK → research_clusters.cluster_id (if annotating a cluster) |
-| annotation_type | TEXT ENUM | YES | ELIGIBILITY_REVIEW / EXTRACTION_CORRECTION / OUTCOME_CORRECTION / CLUSTER_REVIEW / GOLD_STANDARD / EXCLUSION / CONTRADICTION_FLAG / PIN / NOTE |
+| annotation_type | TEXT (CHECK) | YES | ELIGIBILITY_REVIEW / EXTRACTION_CORRECTION / OUTCOME_CORRECTION / CLUSTER_REVIEW / GOLD_STANDARD / EXCLUSION / CONTRADICTION_FLAG / PIN / NOTE |
 | previous_value | TEXT | NO | Value before correction |
 | new_value | TEXT | NO | Value after correction |
 | reason | TEXT | NO | Explanation for the change |
@@ -452,11 +457,12 @@ Background job tracking for ingestion, analysis, and embedding runs.
 | job_id | UUID | YES | Stable job identifier |
 | batch_id | UUID | NO | FK → collection_batches.batch_id |
 | job_type | TEXT | YES | INGESTION / RELEVANCE_CLASSIFICATION / CUE_EXTRACTION / BEHAVIOUR_EXTRACTION / JOURNEY_RECONSTRUCTION / PROBLEM_CODING / EMBEDDING / CLUSTERING / VALIDATION / REPORT_GENERATION |
-| status | TEXT ENUM | YES | PENDING / RUNNING / PARTIAL / FAILED / COMPLETE |
+| status | TEXT (CHECK) | YES | PENDING / RUNNING / PARTIAL / FAILED / COMPLETE |
 | total_records | INTEGER | NO | Total records to process |
 | processed_records | INTEGER | NO | Records processed so far |
 | failed_records | INTEGER | NO | Records that failed processing |
 | error_summary | TEXT | NO | Error description |
+| retry_count | INTEGER | NO | Number of times this job was retried |
 | model_name | TEXT | NO | AI model used (if applicable) |
 | prompt_version | TEXT | NO | Prompt template version (if applicable) |
 | started_at | TIMESTAMPTZ | NO | Job start time |
@@ -473,11 +479,12 @@ Research report generation metadata. Reports link findings to the corpus snapsho
 |---|---|---|---|
 | report_id | UUID | YES | Stable report identifier |
 | report_type | TEXT | YES | OVERVIEW / OPPORTUNITY_ANALYSIS / RESEARCH_SYNTHESIS / CUSTOM |
+| research_question | TEXT | NO | Specific question prompting the report |
 | corpus_snapshot_date | TIMESTAMPTZ | YES | Date the corpus was snapshotted for this report |
 | analysis_version | TEXT | YES | Analysis pipeline version used |
 | total_eligible_records | INTEGER | YES | Qualifying corpus N at time of report |
 | filters_applied | JSONB | NO | Filters used to scope the report |
-| status | TEXT ENUM | YES | GENERATING / COMPLETE / FAILED |
+| status | TEXT (CHECK) | YES | GENERATING / COMPLETE / FAILED |
 | generated_at | TIMESTAMPTZ | NO | Completion timestamp |
 | generated_by | TEXT | NO | System or researcher identifier |
 | output_location | TEXT | NO | File path or URL of generated report |
@@ -514,6 +521,9 @@ PENDING | RUNNING | PARTIAL | FAILED | COMPLETE
 
 ### human_review_status
 UNREVIEWED | APPROVED | REJECTED | CORRECTED
+
+### message_role
+ORIGINAL_POST | OP_FOLLOWUP | OTHER_USER_COMMENT | SUGGESTED_WORKAROUND | OUTCOME_UPDATE | REVIEW
 
 ---
 
