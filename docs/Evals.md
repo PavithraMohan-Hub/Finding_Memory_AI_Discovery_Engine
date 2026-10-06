@@ -320,3 +320,39 @@ These limitations must appear in any public or internal report that cites evalua
 | Adversarial security tests | Injection resistance, URL validation, input handling | Controlled real calls or none |
 
 Evaluation runs are manual or semi-automated. They are not run as part of CI on every commit. They are run at evaluation gates and before phase-completion sign-off.
+
+---
+
+## 14. Phase 1 Database Verification Matrix
+
+This matrix defines the required automated and integration test coverage for Phase 1 migrations (001–009) prior to Phase 2 ingestion.
+
+### 14.1 Positive Validation Tests (PASS)
+
+| Test ID | Scenario | Expected Behavior |
+|---|---|---|
+| P1-POS-01 | Valid source creation | Successfully inserts source in `source_registry` with valid `corpus_type` and `access_status`. |
+| P1-POS-02 | Collection batch creation | Successfully creates `collection_batches` linked to valid `source_id` with 0 initial counts. |
+| P1-POS-03 | Thread + message hierarchy | Creates `threads` record and ordered `thread_messages` with sequence numbers and roles. |
+| P1-POS-04 | Same-thread parent enforcement | Child message successfully references root message when both share identical `thread_id`. |
+| P1-POS-05 | Valid raw evidence insertion | Inserts immutable evidence record with valid source, batch, and non-null `original_text`. |
+| P1-POS-06 | Multiple analysis versions | Same `evidence_id` coexists across distinct analysis runs (`v1`, `v2`) with `is_latest` tracking. |
+| P1-POS-07 | Multiple cluster memberships | Evidence record successfully belongs to multiple `research_clusters` via `cluster_members`. |
+| P1-POS-08 | Human annotation creation | Annotator records correction/review in `human_annotations` without modifying raw source text. |
+| P1-POS-09 | Job lifecycle transitions | `analysis_jobs` transitions cleanly: PENDING → RUNNING → COMPLETE with checkpoint state. |
+| P1-POS-10 | Report creation | Records reproducible report in `report_runs` with snapshot date, version, and filter params. |
+
+### 14.2 Negative Validation Tests (FAIL AS EXPECTED)
+
+| Test ID | Scenario | Expected Error / Boundary |
+|---|---|---|
+| P1-NEG-01 | Orphan source evidence | Rejects `raw_evidence` insert with non-existent or NULL `source_id` (FK / NOT NULL). |
+| P1-NEG-02 | Source/batch mismatch | Rejects `raw_evidence` where `source_id` does not match `collection_batches.source_id` (Composite FK). |
+| P1-NEG-03 | Cross-thread parent message | Rejects `thread_messages` where `parent_message_id` belongs to a different `thread_id` (Composite FK). |
+| P1-NEG-04 | Mismatched thread/message evidence | Rejects `raw_evidence` where `message_id` does not belong to specified `thread_id` (Composite FK). |
+| P1-NEG-05 | Modifying immutable original_text | Rejects UPDATE modifying `raw_evidence.original_text` (`prevent_raw_evidence_original_text_update`). |
+| P1-NEG-06 | Invalid corpus type | Rejects insert with unsupported `corpus_type` (CHECK constraint: `chk_raw_evidence_corpus_type`). |
+| P1-NEG-07 | Invalid controlled taxonomy | Rejects invalid `retrieval_relevance`, `relevance_category`, `message_role`, or `annotation_type`. |
+| P1-NEG-08 | Negative record counts | Rejects negative `records_stored`, `total_records`, or `member_count` (CHECK constraint). |
+| P1-NEG-09 | Anonymous research-data write | Rejects INSERT / UPDATE / DELETE from `anon` or public client roles (RLS / privilege revoke). |
+| P1-NEG-10 | Unauthorized update/delete | Rejects direct mutation of research records by unauthenticated actors (RLS policy). |
