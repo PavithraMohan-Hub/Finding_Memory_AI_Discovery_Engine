@@ -30,7 +30,7 @@
 - **Production build:** Verified (`npm.cmd run build` compiled successfully in 11.3s)
 - **CI state:** Configured & matching (`.github/workflows/ci.yml` runs typecheck, lint, and build)
 - **Secrets check:** Verified (0 keys/tokens committed, .env ignored, .env.example contains placeholders only)
-- **Last safe commit:** 60ccb58 (feat(phase-0): complete and verify executable Next.js TypeScript foundation)
+- **Last safe commit:** f2d6edc (feat(phase-0): complete and verify executable Next.js TypeScript foundation)
 
 ---
 
