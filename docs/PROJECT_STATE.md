@@ -1,8 +1,8 @@
 # PROJECT_STATE — Finding Memory
 
 **Last updated:** 2026-10-06  
-**Current phase:** PLANNING — Documentation Complete  
-**Status:** AWAITING HUMAN APPROVAL before any implementation begins
+**Current phase:** Phase 1 — Database + Research Schema  
+**Status:** IN PROGRESS  
 
 ---
 
@@ -15,7 +15,7 @@
 | Research goal | Understand how people attempt to retrieve photos when their memory of them is incomplete |
 | Target corpus | ~2,000 qualifying USER_EVIDENCE records (incremental: 10 → 100 → 500 → 2,000+) |
 | Architecture | Next.js/TypeScript (Vercel) + Supabase PostgreSQL + pgvector + Gemini API + GitHub Actions |
-| Current implementation state | Zero — no code written, no services activated |
+| Current implementation state | Phase 0 scaffolded (Manual structure created, Git initialized) |
 
 ---
 
@@ -25,14 +25,14 @@
 |---|---|---|
 | docs/ProblemStatement_Finding_Memory.txt | EXISTS (source of truth) | docs/ |
 | AntigravityMasterPrompt.txt | EXISTS (operating rules) | docs/ |
-| Architecture.md | DRAFT — Awaiting approval | docs/ |
-| DataSources.md | DRAFT — Awaiting approval | docs/ |
-| ResearchSchema.md | DRAFT — Awaiting approval | docs/ |
-| ImplementationPlan.md | DRAFT — Awaiting approval | docs/ |
-| Conventions.md | DRAFT — Awaiting approval | docs/ |
-| EdgeCases.md | DRAFT — Awaiting approval | docs/ |
-| Evals.md | DRAFT — Awaiting approval | docs/ |
-| Decisions.md | DRAFT — Awaiting approval | docs/ |
+| Architecture.md | APPROVED | docs/ |
+| DataSources.md | APPROVED | docs/ |
+| ResearchSchema.md | APPROVED | docs/ |
+| ImplementationPlan.md | APPROVED | docs/ |
+| Conventions.md | APPROVED | docs/ |
+| EdgeCases.md | APPROVED | docs/ |
+| Evals.md | APPROVED | docs/ |
+| Decisions.md | APPROVED | docs/ |
 | PROJECT_STATE.md | THIS FILE | docs/ |
 | USER_ACTIONS.md | CREATED | docs/ |
 | EXTERNAL_SERVICES.md | CREATED | docs/ |
@@ -47,9 +47,9 @@
 
 | Phase | Name | Status |
 |---|---|---|
-| PLANNING | Documentation | IMPLEMENTED — NOT TESTED (awaiting approval) |
-| 0 | Project Foundation | NOT STARTED |
-| 1 | Database + Research Schema | NOT STARTED |
+| PLANNING | Documentation | APPROVED |
+| 0 | Project Foundation | COMPLETED (Manual Scaffold) |
+| 1 | Database + Research Schema | IN PROGRESS |
 | 2 | First Real Evidence Ingestion | NOT STARTED |
 | 3 | Cleaning + Normalization + Dedup | NOT STARTED |
 | 4 | Relevance Classifier | NOT STARTED |
