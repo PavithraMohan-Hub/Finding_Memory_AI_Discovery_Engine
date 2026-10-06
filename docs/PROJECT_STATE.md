@@ -1,8 +1,8 @@
 # PROJECT_STATE — Finding Memory
 
-**Last updated:** 2026-10-06  
-**Current phase:** Phase 0 — Project Foundation (VERIFIED)  
-**Status:** PHASE 0 — VERIFIED  
+**Last updated:** 2026-10-06
+**Current phase:** Phase 1 — Database + Research Schema (VERIFIED)
+**Status:** PHASE 1 — VERIFIED
 
 ---
 
@@ -15,7 +15,31 @@
 | Research goal | Understand how people attempt to retrieve photos when their memory of them is incomplete |
 | Target corpus | ~2,000 qualifying USER_EVIDENCE records (incremental: 10 → 100 → 500 → 2,000+) |
 | Architecture | Next.js/TypeScript (Vercel) + Supabase PostgreSQL + pgvector + Gemini API + GitHub Actions |
-| Current implementation state | Phase 0 Executable Verification Complete |
+| Current implementation state | Phase 1 Hosted Database Deployment & Verification Complete |
+
+### Phase 1 Verification Record
+- **Verification status:** PHASE 1 — VERIFIED
+- **Migrations applied (001–009):**
+  - `20261006152424_foundation.sql` (001)
+  - `20261006160000_source_registry_and_collection_batches.sql` (002)
+  - `20261006170000_threads_thread_messages_raw_evidence.sql` (003)
+  - `20261006180000_evidence_analysis.sql` (004)
+  - `20261006190000_research_clusters_and_members.sql` (005)
+  - `20261006200000_human_annotations.sql` (006)
+  - `20261006210000_analysis_jobs_and_report_runs.sql` (007)
+  - `20261006220000_indexes.sql` (008)
+  - `20261006230000_row_level_security_and_access.sql` (009)
+- **Hosted database deployment:** 100% applied cleanly via `supabase db push`
+- **Migration history result:** Perfectly synchronized (local and remote align on all 9 migrations; dry run confirms up to date)
+- **DB lint result:** Passed cleanly (`supabase db lint --linked --schema public --fail-on error` reported 0 schema errors)
+- **Schema objects verified:** 11 public tables, 2 functions, 11 triggers, all primary keys, composite foreign keys, and indexes active
+- **RLS status:** Enabled on all 11 public tables; `REVOKE` write privileges from `anon` & `authenticated`; scoped `SELECT` policies active
+- **Vector isolation:** pgvector extension NOT enabled; `evidence_embeddings` table does NOT exist (deferred to Phase 7 per D024)
+- **Positive evaluation tests (P1-POS-01 to P1-POS-10):** 10/10 PASS
+- **Negative evaluation tests (P1-NEG-01 to P1-NEG-08):** 8/8 FAIL AS EXPECTED
+- **Access control & RLS tests (P1-NEG-09 to P1-NEG-10):** 2/2 PASS (anonymous writes denied with `insufficient_privilege`; withdrawn evidence & incomplete analyses properly hidden from public scope)
+- **Database state:** 0 residual rows across all tables (pristine development DB)
+- **Last verified commit:** de7ac6f
 
 ### Phase 0 Verification Record
 - **Verification status:** PHASE 0 — VERIFIED
@@ -64,7 +88,7 @@
 |---|---|---|
 | PLANNING | Documentation | APPROVED |
 | 0 | Project Foundation | VERIFIED |
-| 1 | Database + Research Schema | IN PROGRESS (CLI linked; Migrations 001–009 created & audited; pre-deployment review ready) |
+| 1 | Database + Research Schema | VERIFIED |
 | 2 | First Real Evidence Ingestion | NOT STARTED |
 | 3 | Cleaning + Normalization + Dedup | NOT STARTED |
 | 4 | Relevance Classifier | NOT STARTED |
@@ -101,7 +125,7 @@
 | Service | Status |
 |---|---|
 | GitHub | CONFIGURED (origin/main connected) |
-| Supabase | CONFIGURED (CLI linked to hosted dev project; credentials verified safe; Migrations 001–009 created & audited) |
+| Supabase | CONFIGURED (CLI linked to hosted dev project; Migrations 001–009 deployed & verified) |
 | Vercel | NOT CONFIGURED |
 | Google AI Studio / Gemini API | NOT CONFIGURED |
 | YouTube Data API | NOT CONFIGURED (Phase 12) |
@@ -128,8 +152,8 @@
 
 ## 7. Current Blockers
 
-None for Phase 0. Phase 0 executable verification is complete.
-Do not start Phase 1 until explicitly instructed.
+None for Phase 1. Phase 1 hosted database deployment and verification is complete.
+Do not start Phase 2 until explicitly instructed.
 
 ---
 
